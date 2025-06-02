@@ -1,0 +1,19 @@
+{
+    "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+    "version": "0.2",
+    "id": "root",
+    "name": "Root Configuration",
+    "description": "Root configuration for the project.",
+    "enabled": true,
+    "import": [
+        "./.cspell/configs/project-dictionary.json",
+        "./.cspell/configs/arch-linux-dictionary.json",
+        "./.cspell/configs/python-dictionary.json"
+    ],
+    "useGitignore": true,
+    "gitignoreRoot": ["."],
+    "caseSensitive": false,
+    "loadDefaultConfiguration": true,
+    "unknownWords": "report-all",
+    "readonly": true
+}

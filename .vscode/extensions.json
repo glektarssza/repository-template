@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "github.remotehub",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions"
+    ]
+}
