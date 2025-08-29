@@ -1,0 +1,33 @@
+- name: Bug
+  description: Something isn't working right.
+  color: "450F08"
+- name: Chore
+  description: A catch-all for things that don't fit another category.
+  color: "c5def5"
+- name: Dependency
+  description: Dependencies need updating.
+  color: "707153"
+- name: Documentation
+  description: Improving documentation.
+  color: "4F7AD1"
+- name: Duplicate
+  description: Something already exists that covers this.
+  color: "B6B4C1"
+- name: Feature
+  description: A request to add a new feature or functionality.
+  color: "517E1C"
+- name: Need More Information
+  description: There's not enough information to do anything with this.
+  color: "9C7509"
+- name: Security
+  description: Related to security and code exploits.
+  color: "C82E15"
+- name: Will Not Fix
+  description: Either not our issue or outside the scope of the project.
+  color: "E5D5F5"
+- name: Working As Intended
+  description: It's doing what it's supposed to do.
+  color: "8F41B2"
+- name: Release
+  description: Related to releasing a new version.
+  color: "63FDB7"
