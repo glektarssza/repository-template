@@ -1,0 +1,17 @@
+{
+    "name": "Prevent Creation of Non-Version Tags",
+    "target": "tag",
+    "enforcement": "active",
+    "conditions": {
+        "ref_name": {
+            "exclude": ["refs/tags/v*"],
+            "include": ["~ALL"]
+        }
+    },
+    "rules": [
+        {
+            "type": "creation"
+        }
+    ],
+    "bypass_actors": []
+}

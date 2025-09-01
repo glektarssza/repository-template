@@ -1,0 +1,37 @@
+{
+    "name": "Restrict Branch Names",
+    "target": "branch",
+    "enforcement": "active",
+    "conditions": {
+        "ref_name": {
+            "exclude": [
+                "~DEFAULT_BRANCH",
+                "refs/heads/main",
+                "refs/heads/master",
+                "refs/heads/dev",
+                "refs/heads/chore/*",
+                "refs/heads/chore/**/*",
+                "refs/heads/feature/*",
+                "refs/heads/feature/**/*",
+                "refs/heads/hotfix/*",
+                "refs/heads/hotfix/**/",
+                "refs/heads/bugfix/*",
+                "refs/heads/bugfix/**/*",
+                "refs/heads/bug/*",
+                "refs/heads/bug/**/*",
+                "refs/heads/release/v*",
+                "refs/heads/security/*",
+                "refs/heads/security/**/*",
+                "refs/heads/dependabot/*",
+                "refs/heads/dependabot/**/*"
+            ],
+            "include": ["~ALL"]
+        }
+    },
+    "rules": [
+        {
+            "type": "creation"
+        }
+    ],
+    "bypass_actors": []
+}
