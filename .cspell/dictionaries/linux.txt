@@ -1,0 +1,4 @@
+mapfile
+netrwhist
+pacman
+sessionx
