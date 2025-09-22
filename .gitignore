@@ -1,13 +1,13 @@
 # Editors #
 ## Visual Studio Code ##
 ### Workspace Folder ###
-.vscode/*
+/.vscode/**
 
 ### Exceptions ###
-!.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/tasks.json
-!.vscode/*.code-snippets
+!/.vscode/extensions.json
+!/.vscode/launch.json
+!/.vscode/tasks.json
+!/.vscode/*.code-snippets
 
 ## Vim ##
 ### Swap ###
@@ -27,6 +27,7 @@ Sessionx.vim
 
 ### Auto-generated Tag Files ###
 tags
+ctags
 
 ### Undo Persistence ###
 [._]*.un~
@@ -36,4 +37,12 @@ tags
 
 # Environment #
 ## General ##
-.env*
+**/.env*
+
+# Binaries #
+## Windows ##
+**/bin/**
+
+## Let `deno` binaries at repo root through ##
+!/bin/deno.exe
+!/bin/deno
