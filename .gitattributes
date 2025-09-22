@@ -14,7 +14,7 @@
 *.exe filter=lfs diff=lfs merge=lfs -text
 
 # /bin/deno file is treated as a binary file.
-/bin/deno binary
+**/deno binary
 
 # Run /bin/deno file through Git LFS.
-/bin/deno filter=lfs diff=lfs merge=lfs -text
+**/deno filter=lfs diff=lfs merge=lfs -text

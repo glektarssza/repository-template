@@ -38,11 +38,3 @@ ctags
 # Environment #
 ## General ##
 **/.env*
-
-# Binaries #
-## Windows ##
-**/bin/**
-
-## Let `deno` binaries at repo root through ##
-!/bin/deno.exe
-!/bin/deno
