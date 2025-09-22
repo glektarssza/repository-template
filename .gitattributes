@@ -1,8 +1,20 @@
-# All files are treated as text files with Unix-style line endings by default
+# All files are treated as text files with Unix-style line endings by default.
 * text eol=lf
 
-# All .bat files are treated as text files with Windows-style line endings by default
+# All .bat files are treated as text files with Windows-style line endings by default.
 *.bat text eol=crlf
 
-# All .cmd files are treated as text files with Windows-style line endings by default
+# All .cmd files are treated as text files with Windows-style line endings by default.
 *.cmd text eol=crlf
+
+# All .exe files are treated as binary files.
+*.exe binary
+
+# Run .exe files through Git LFS.
+*.exe filter=lfs diff=lfs merge=lfs -text
+
+# /bin/deno file is treated as a binary file.
+/bin/deno binary
+
+# Run /bin/deno file through Git LFS.
+/bin/deno filter=lfs diff=lfs merge=lfs -text
