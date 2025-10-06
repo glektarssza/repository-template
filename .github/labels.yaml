@@ -24,7 +24,7 @@
   color: "C82E15"
 - name: "Tech Debt"
   description: "Something relating to outstanding technical debt."
-  color "E2AA60"
+  color: "E2AA60"
 - name: "Will Not Fix"
   description: "Either not our issue or outside the scope of the project."
   color: "E5D5F5"
