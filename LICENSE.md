@@ -1,5 +1,5 @@
 # License #
 
-Copyright (c) 2025 G'lek Tarssza
+Copyright (c) 2025-present G'lek Tarssza
 
 All rights reserved.
