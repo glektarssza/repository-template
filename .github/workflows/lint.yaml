@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Lint
+on:
+  workflow_call:
+    inputs:
+      git-ref:
+        description: |
+          The Git reference to run the workflow on.
+
+          Must be a valid commit-ish (a branch, tag, commit, etc.).
+
+          Defaults to the reference that triggered the workflow for push and
+          pull request events ("github.ref") and the head SHA ("github.sha") for
+          all other events.
+        type: string
+        required: false
+        default: ${{github.ref || github.sha}}
+    secrets:
+      github-token:
+        description: |
+          The token to use for authentication when making calls to the GitHub
+          APIs.
+
+          Defaults to the value in "secrets.GITHUB_TOKEN" if not provided.
+        required: false
+env:
+  GH_TOKEN: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      # -- Needed to clone the repository
+      contents: read
+    steps:
+      - id: clone-repository
+        name: Clone the repository
+        uses: actions/checkout@v5
+        with:
+          lfs: true
+          token: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
+      - id: prepare-python
+        name: Prepare Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - id: prepare-pipx
+        name: Prepare pipx
+        shell: bash
+        run: |
+          python3 -m pip install --user pipx;
+          python3 -m pipx ensurepath;
+      - id: prepare-pre-commit
+        name: Prepare pre-commit
+        shell: bash
+        run: |
+          pipx install pre-commit;
+      - id: lint
+        name: Lint
+        shell: bash
+        run: |
+          pre-commit run --all-files
