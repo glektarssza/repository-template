@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Manual Lint
+on:
+  workflow_dispatch:
+env:
+  GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+jobs:
+  lint:
+    name: Lint
+    permissions:
+      # -- Needed to clone the repository
+      contents: read
+    uses: ./.github/workflows/lint.yaml
+    secrets:
+      github-token: ${{secrets.GITHUB_TOKEN}}
