@@ -1,7 +1,7 @@
 {
     "name": "Require Status Checks to Pass before Merge to Default Branch",
     "target": "branch",
-    "enforcement": "disabled",
+    "enforcement": "active",
     "conditions": {
         "ref_name": {
             "exclude": [],
