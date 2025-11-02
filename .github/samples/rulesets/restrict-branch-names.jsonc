@@ -6,9 +6,6 @@
         "ref_name": {
             "exclude": [
                 "~DEFAULT_BRANCH",
-                "refs/heads/main",
-                "refs/heads/master",
-                "refs/heads/dev",
                 "refs/heads/chore/*",
                 "refs/heads/chore/**/*",
                 "refs/heads/feature/*",
