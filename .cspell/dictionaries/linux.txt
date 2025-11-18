@@ -1,4 +1,0 @@
-mapfile
-netrwhist
-pacman
-sessionx

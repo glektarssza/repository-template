@@ -1,4 +1,13 @@
-g'lek
+asexplicit
+ensurepath
 glek
 glektarssza
+mapfile
+netrwhist
+noconfirm
+pacman
+pacman
+pipx
+remotehub
+sessionx
 tarssza
