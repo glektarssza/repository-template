@@ -22,7 +22,9 @@
                 "refs/heads/dependabot/*",
                 "refs/heads/dependabot/**/*"
             ],
-            "include": ["~ALL"]
+            "include": [
+                "~ALL"
+            ]
         }
     },
     "rules": [

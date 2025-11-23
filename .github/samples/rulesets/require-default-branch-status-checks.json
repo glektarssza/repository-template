@@ -5,7 +5,9 @@
     "conditions": {
         "ref_name": {
             "exclude": [],
-            "include": ["~DEFAULT_BRANCH"]
+            "include": [
+                "~DEFAULT_BRANCH"
+            ]
         }
     },
     "rules": [
@@ -16,21 +18,15 @@
                 "do_not_enforce_on_create": false,
                 "required_status_checks": [
                     {
-                        // -- GitHub Actions workflow name
                         "context": "Lint / Lint",
-                        // -- GitHub Actions integration ID
                         "integration_id": 15368
                     },
                     {
-                        // -- GitHub Actions workflow name
                         "context": "Test / Test",
-                        // -- GitHub Actions integration ID
                         "integration_id": 15368
                     },
                     {
-                        // -- GitHub Actions workflow name
                         "context": "Build / Build",
-                        // -- GitHub Actions integration ID
                         "integration_id": 15368
                     }
                 ]
@@ -39,7 +35,6 @@
     ],
     "bypass_actors": [
         {
-            // -- The actor ID (5 = repository administrator role)
             "actor_id": 5,
             "actor_type": "RepositoryRole",
             "bypass_mode": "pull_request"

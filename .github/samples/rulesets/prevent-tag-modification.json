@@ -1,11 +1,13 @@
 {
-    "name": "Prevent Destruction of Default Branch",
-    "target": "branch",
+    "name": "Prevent Modification of Tags",
+    "target": "tag",
     "enforcement": "active",
     "conditions": {
         "ref_name": {
             "exclude": [],
-            "include": ["~DEFAULT_BRANCH"]
+            "include": [
+                "~ALL"
+            ]
         }
     },
     "rules": [
@@ -14,6 +16,9 @@
         },
         {
             "type": "non_fast_forward"
+        },
+        {
+            "type": "update"
         }
     ],
     "bypass_actors": []
