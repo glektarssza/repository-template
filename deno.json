@@ -30,7 +30,10 @@
         "useBraces": "always",
         "useTabs": false
     },
-    "imports": {},
+    "imports": {
+        "yargs": "npm:yargs@^18.0.0",
+        "@types/yargs": "npm:@types/yargs@^17.0.35"
+    },
     "lint": {
         "include": ["./scripts/*.ts", "./scripts/**/*.ts"],
         "report": "pretty",
@@ -130,7 +133,6 @@
                 "prefer-ascii",
                 "prefer-const",
                 "prefer-namespace-keyword",
-                "prefer-primordials",
                 "require-await",
                 "require-yield",
                 "triple-slash-reference",

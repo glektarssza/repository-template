@@ -4,6 +4,7 @@ glek
 glektarssza
 isnan
 mapfile
+nargs
 netrwhist
 noconfirm
 pacman
@@ -13,3 +14,4 @@ primordials
 remotehub
 sessionx
 tarssza
+yarg
