@@ -46,3 +46,7 @@ ctags
 ## Let `deno` binaries at repo root through ##
 !/bin/deno.exe
 !/bin/deno
+
+# Packages #
+## NodeJS/Deno ##
+node_modules/
