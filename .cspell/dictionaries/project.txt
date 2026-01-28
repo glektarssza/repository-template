@@ -2,12 +2,14 @@ asexplicit
 ensurepath
 glek
 glektarssza
+isnan
 mapfile
 netrwhist
 noconfirm
 pacman
 pacman
 pipx
+primordials
 remotehub
 sessionx
 tarssza
