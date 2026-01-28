@@ -30,6 +30,7 @@
         "useBraces": "always",
         "useTabs": false
     },
+    "imports": {},
     "lint": {
         "include": ["./scripts/*.ts", "./scripts/**/*.ts"],
         "report": "pretty",
