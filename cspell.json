@@ -5,13 +5,37 @@
     "name": "Root Configuration",
     "description": "Root configuration for the project.",
     "enabled": true,
+    "dictionaries": [
+        "en-ca",
+        "en-common-misspellings",
+        "public-licenses",
+        "computing-acronyms",
+        "game-development",
+        "gaming-terms",
+        "networking-terms",
+        "softwareTerms",
+        "coding-compound-terms",
+        "git",
+        "fonts",
+        "filetypes",
+        "shell",
+        "bash"
+    ],
     "import": ["./.cspell/configs/project-dictionary.json"],
     "enableGlobDot": true,
-    "ignorePaths": [".git"],
+    "globRoot": ".",
+    "files": ["./**"],
     "useGitignore": true,
     "gitignoreRoot": ["."],
     "caseSensitive": false,
+    "ignorePaths": ["./.git/**"],
     "loadDefaultConfiguration": true,
     "unknownWords": "report-all",
-    "readonly": true
+    "readonly": true,
+    "cache": {
+        "useCache": true,
+        "cacheFormat": "universal",
+        "cacheStrategy": "content",
+        "cacheLocation": ".cspellcache"
+    }
 }
