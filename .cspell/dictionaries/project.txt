@@ -1,11 +1,12 @@
 asexplicit
 ensurepath
+generis
 glek
 glektarssza
 mapfile
 netrwhist
 noconfirm
-pacman
+noninfringement
 pacman
 pipx
 remotehub

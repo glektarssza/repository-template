@@ -8,6 +8,7 @@
 !/.vscode/launch.json
 !/.vscode/tasks.json
 !/.vscode/*.code-snippets
+!/.vscode/*.code-workspace
 
 ## Vim ##
 ### Swap ###
@@ -39,10 +40,6 @@ ctags
 ## General ##
 **/.env*
 
-# Binaries #
-## Windows ##
-**/bin/**
-
-## Let `deno` binaries at repo root through ##
-!/bin/deno.exe
-!/bin/deno
+# Cache #
+## CSpell ##
+.cspellcache
