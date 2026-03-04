@@ -6,3 +6,6 @@
 
 # All .cmd files are treated as text files with Windows-style line endings by default.
 *.cmd text eol=crlf encoding=utf-8
+
+# All .cmd files are treated as text files with Windows-style line endings by default.
+*.ini text eol=crlf encoding=utf-8
