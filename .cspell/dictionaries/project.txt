@@ -10,5 +10,6 @@ noninfringement
 pacman
 pipx
 remotehub
+safecrlf
 sessionx
 tarssza
