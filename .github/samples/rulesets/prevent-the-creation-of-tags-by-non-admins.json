@@ -1,13 +1,11 @@
 {
-    "name": "Prevent Creation of Tags by Non-Administrators",
+    "name": "Prevent the creation of tags by non-admins",
     "target": "tag",
     "enforcement": "active",
     "conditions": {
         "ref_name": {
             "exclude": [],
-            "include": [
-                "~ALL"
-            ]
+            "include": ["~ALL"]
         }
     },
     "rules": [
