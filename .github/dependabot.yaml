@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - name: 'Github Actions'
+    directory: /
+    package-ecosystem: github-actions
+    assignees:
+      - glektarssza
+    labels:
+      - Dependency
+    rebase-strategy: auto
+    patterns:
+      - '*'
+    pull-request-branch-name:
+      separator: /
+    multi-ecosystem-group: infrastructure
+    schedule:
+      interval: weekly
+      day: wednesday
+      time: '12:00'
+      timezone: Canada/Mountain
