@@ -1,7 +1,6 @@
 version: 2
 updates:
-  - name: 'Github Actions'
-    directory: /
+  - directory: /
     package-ecosystem: github-actions
     assignees:
       - glektarssza
