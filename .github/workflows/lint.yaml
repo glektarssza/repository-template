@@ -35,7 +35,7 @@ jobs:
     steps:
       - id: clone-repository
         name: Clone the repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           lfs: true
           token: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
