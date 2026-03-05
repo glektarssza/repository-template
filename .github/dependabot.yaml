@@ -1,19 +1,44 @@
 version: 2
-updates:
-  - directory: /
-    package-ecosystem: github-actions
-    assignees:
-      - glektarssza
-    labels:
-      - Dependency
-    rebase-strategy: auto
-    patterns:
-      - '*'
-    pull-request-branch-name:
-      separator: /
-    multi-ecosystem-group: infrastructure
+multi-ecosystem-groups:
+  infrastructure:
     schedule:
       interval: weekly
       day: wednesday
       time: '12:00'
       timezone: Canada/Mountain
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    commit-message:
+      prefix: '[Dependency] '
+    assignees:
+      - glektarssza
+    labels:
+      - Dependency
+    groups:
+      production-version-updates:
+        applies-to: version-updates
+        dependency-type: production
+        patterns:
+          - '*'
+      development-version-updates:
+        applies-to: version-updates
+        dependency-type: development
+        patterns:
+          - '*'
+      production-security-updates:
+        applies-to: security-updates
+        dependency-type: production
+        patterns:
+          - '*'
+      development-security-updates:
+        applies-to: security-updates
+        dependency-type: development
+        patterns:
+          - '*'
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - '*'
+    pull-request-branch-name:
+      separator: /
+    rebase-strategy: auto
