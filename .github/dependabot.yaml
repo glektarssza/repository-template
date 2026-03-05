@@ -1,6 +1,10 @@
 version: 2
 multi-ecosystem-groups:
   infrastructure:
+    commit-message:
+      prefix: '[Dependency] '
+    pull-request-branch-name:
+      separator: /
     schedule:
       interval: weekly
       day: wednesday
@@ -9,8 +13,6 @@ multi-ecosystem-groups:
 updates:
   - package-ecosystem: github-actions
     directory: /
-    commit-message:
-      prefix: '[Dependency] '
     assignees:
       - glektarssza
     labels:
@@ -39,6 +41,4 @@ updates:
     multi-ecosystem-group: infrastructure
     patterns:
       - '*'
-    pull-request-branch-name:
-      separator: /
     rebase-strategy: auto
