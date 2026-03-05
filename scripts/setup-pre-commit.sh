@@ -1,42 +1,122 @@
 #!/usr/bin/env bash
 
-# Forward declare some variables
-declare -a PRE_COMMIT_PATHS
-declare SCRIPT_DIR PROJECT_ROOT DISTRO PRE_COMMIT_INDEX
+set +x +e
 
-# Get the directory the script is running from.
-# === Outputs ===
-# The path to the directory the script is running from.
-# === Returns ===
-# `0` - the function succeeded.
-# `1` - a `cd` call failed.
-# `2` - a `popd` call failed.
-function get_script_dir() {
-    pushd . >/dev/null
-    local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
-    while [[ -L "${SCRIPT_PATH}" ]]; do
-        cd "$(dirname -- "${SCRIPT_PATH}")" || return 1
-        SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
-    done
-    cd "$(dirname -- "$SCRIPT_PATH")" >/dev/null || return 1
-    SCRIPT_PATH="$(pwd)"
-    popd >/dev/null || return 2
-    echo "${SCRIPT_PATH}"
-    return 0
+function setup_vars() {
+    #
+    declare -a PRE_COMMIT_PATHS
+    declare SCRIPT_DIR PROJECT_ROOT DISTRO PRE_COMMIT_INDEX
+}
+
+function setup() {
+    setup_vars
+}
+
+function cleanup_vars() {
+    unset SCRIPT_DIR PROJECT_ROOT DISTRO PRE_COMMIT_PATHS PRE_COMMIT_INDEX
 }
 
 # Our cleanup function
 # shellcheck disable=SC2329
 function cleanup() {
-    unset SCRIPT_DIR PROJECT_ROOT DISTRO PRE_COMMIT_PATHS PRE_COMMIT_INDEX
+    cleanup_vars
 }
+
+# Convert a string to all lower case.
+# === Inputs ===
+# `$1` - The string to convert.
+# === Outputs ===
+# The converted string.
+# === Returns ===
+# `0` - The operation succeeded.
+# `*` - The operation failed.
+function to_lower_case() {
+    if ! echo "$1" | tr '[:upper:]' '[:lower:]'; then
+        return 1
+    fi
+    return 0
+}
+
+# Convert a string to all upper case.
+# === Inputs ===
+# `$1` - The string to convert.
+# === Outputs ===
+# The converted string.
+# === Returns ===
+# `0` - The operation succeeded.
+# `*` - The operation failed.
+function to_upper_case() {
+    if ! echo "$1" | tr '[:lower:]' '[:upper:]'; then
+        return 1
+    fi
+    return 0
+}
+
+# Prompt the user if it's okay to continue.
+# === Inputs ===
+# `$1` - The prompt to display.
+# `$2` - The default response. Defaults to `y`.
+# === Returns ===
+# `0` - Okay to continue.
+# `1` - Not okay to continue.
+# `2` - Some other error.
+function prompt_to_continue() {
+    local PROMPT="$1"
+    local DEFAULT_RESP="${2:-y}"
+    local RESP=""
+    if [[ -z "${PROMPT}" ]]; then
+        log_error "No prompt provided to 'prompt_to_continue'!"
+        return 2
+    fi
+    if [[ "$(to_lower_case "${DEFAULT_RESP}")" == "y" ]]; then
+        PROMPT="${PROMPT}\nIs this okay? [Y/n] "
+    else
+        PROMPT="${PROMPT}\nIs this okay? [y/N] "
+    fi
+    while true; do
+        printf "%b" "${PROMPT}"
+        read -r RESP
+        case "$(to_lower_case "${RESP:-${DEFAULT_RESP}}")" in
+            y) return 0 ;;
+            n) return 1 ;;
+            *)
+                RESP=""
+                log_error "Invalid response \"${RESP}\"! Please try again!"
+                ;;
+        esac
+    done
+}
+
+setup
 
 # Run our cleanup routine on exit
 trap cleanup EXIT
 
-if ! SCRIPT_DIR="$(get_script_dir)"; then
-    return 1
-fi
+SCRIPT_DIR="$(
+    (
+        # Get the directory the script is running from.
+        # === Outputs ===
+        # The path to the directory the script is running from.
+        # === Returns ===
+        # `0` - the function succeeded.
+        # `1` - a `cd` call failed.
+        # `2` - a `popd` call failed.
+        function get_script_dir() {
+            pushd . > /dev/null
+            local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
+            while [[ -L "${SCRIPT_PATH}" ]]; do
+                cd "$(dirname -- "${SCRIPT_PATH}")" || return 1
+                SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
+            done
+            cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 1
+            SCRIPT_PATH="$(pwd)"
+            popd > /dev/null || return 2
+            echo "${SCRIPT_PATH}"
+            return 0
+        }
+        get_script_dir
+    )
+)"
 
 _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}/lib/")"
 
@@ -57,10 +137,10 @@ if [[ -n "${CI}" ]]; then
 fi
 
 # Locate pre-commit
-PRE_COMMIT="$(which pre-commit 2>/dev/null)"
+PRE_COMMIT="$(command -v pre-commit 2> /dev/null)"
 if [[ -z "${PRE_COMMIT}" ]]; then
-    log_warning "\"pre-commit\" is not installed, attempting to install!"
-    if ! which pipx >/dev/null 2>&1; then
+    log_warning "\"pre-commit\" is not installed, attempting to install via \"pipx\"!"
+    if ! which pipx > /dev/null 2>&1; then
         log_warning "\"pipx\" is not installed, attempting to install!"
         case "${DISTRO}" in
             arch)
@@ -77,11 +157,19 @@ if [[ -z "${PRE_COMMIT}" ]]; then
         log_info "We're going to attempt to install \"pipx\", this will require admin permissions!"
         if [[ ! -x "${PACMAN}" ]]; then
             log_warning "Unable to execute \"${PACMAN}\" as we are, trying to elevate..."
-            if which sudo; then
+            if command -v sudo >&/dev/null; then
+                if ! prompt_to_continue "We're about to run 'sudo \"${SHELL}\" -i -c \"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
+                    log_error "Aborting!"
+                    exit 1
+                fi
                 log_verbose "Trying to elevate via \"sudo\"..."
                 sudo --login eval "${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}"
                 STATUS_CODE=$?
-            elif which su; then
+            elif command -v su >&/dev/null; then
+                if ! prompt_to_continue "We're about to run 'su --login --command=\n\"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
+                    log_error "Aborting!"
+                    exit 1
+                fi
                 log_verbose "Trying to elevate via \"su\"..."
                 su --login --command="${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}"
                 STATUS_CODE=$?
@@ -108,7 +196,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
         exit $STATUS_CODE
     fi
     log_info "\"pre-commit\" was installed successfully!"
-    PRE_COMMIT="$(which pre-commit 2>/dev/null)"
+    PRE_COMMIT="$(which pre-commit 2> /dev/null)"
     if [[ -z "${PRE_COMMIT}" ]]; then
         log_warning "Still cannot find \"pre-commit\", trying some well-known locations..."
         mapfile -t PRE_COMMIT_PATHS < <(find ~ -maxdepth 4 \( -type f -or -type l \) -name pre-commit -printf '%p\n')
@@ -131,20 +219,30 @@ if [[ -z "${PRE_COMMIT}" ]]; then
         PRE_COMMIT="${PRE_COMMIT_PATHS[(${PRE_COMMIT_INDEX} - 1)]}"
         log_verbose "Selected \"pre-commit\" executable \"${PRE_COMMIT}\""
     fi
+else
+    log_verbose "\"pre-commit\" found at \"${PRE_COMMIT}\"!"
 fi
 
-pushd "${PROJECT_ROOT}" >/dev/null 2>&1 || (log_error "Failed to enter project root directory!" && exit 1) || exit 1
+if ! pushd "${PROJECT_ROOT}" > /dev/null 2>&1; then
+    log_error "Failed to enter project root directory!"
+    exit 1
+fi
 
 log_info "Installing pre-commit hooks..."
-"${PRE_COMMIT}" install --overwrite --hook-type pre-commit --hook-type pre-push
+printf "%b=== pre-commit output ===%b\n" "$(sgr_8bit_fg 163)" "$(sgr_reset)"
+"${PRE_COMMIT}" install --hook-type pre-commit --hook-type pre-push
 STATUS_CODE=$?
+printf "%b=== pre-commit output ===%b\n" "$(sgr_8bit_fg 163)" "$(sgr_reset)"
+log_verbose "\"pre-commit\" exited with code \"${STATUS_CODE}\""
 if [[ "${STATUS_CODE}" != "0" ]]; then
-    log_verbose "\"pre-commit\" exited with code \"${STATUS_CODE}\"!"
     log_error "Failed to install pre-commit hooks!"
     exit $STATUS_CODE
 fi
 
-popd >/dev/null 2>&1 || (log_error "Failed to exit project root directory!" && exit 1) || exit 1
+if ! popd > /dev/null 2>&1; then
+    log_error "Failed to exit project root directory!"
+    exit 1
+fi
 
 # On success, exit
 exit 0

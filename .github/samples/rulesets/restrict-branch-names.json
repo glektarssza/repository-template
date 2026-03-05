@@ -1,5 +1,5 @@
 {
-    "name": "Restrict Branch Names",
+    "name": "Restrict branch names",
     "target": "branch",
     "enforcement": "active",
     "conditions": {
@@ -8,23 +8,29 @@
                 "~DEFAULT_BRANCH",
                 "refs/heads/chore/*",
                 "refs/heads/chore/**/*",
+                "refs/heads/task/*",
+                "refs/heads/task/**/*",
                 "refs/heads/feature/*",
                 "refs/heads/feature/**/*",
                 "refs/heads/hotfix/*",
                 "refs/heads/hotfix/**/",
+                "refs/heads/hot-fix/*",
+                "refs/heads/hot-fix/**/",
                 "refs/heads/bugfix/*",
                 "refs/heads/bugfix/**/*",
                 "refs/heads/bug/*",
                 "refs/heads/bug/**/*",
+                "refs/heads/bug-fix/*",
+                "refs/heads/bug-fix/**/*",
+                "refs/heads/bugfix/*",
+                "refs/heads/bugfix/**/*",
                 "refs/heads/release/v*",
                 "refs/heads/security/*",
                 "refs/heads/security/**/*",
                 "refs/heads/dependabot/*",
                 "refs/heads/dependabot/**/*"
             ],
-            "include": [
-                "~ALL"
-            ]
+            "include": ["~ALL"]
         }
     },
     "rules": [

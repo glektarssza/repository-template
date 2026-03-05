@@ -24,6 +24,9 @@ This template repository is set up to support the following:
       `launch.json`, and any `.code-snippets` files. It also ignores any
       Vim-related files, log files (`*.log*`), and local environment files
       (`.env*`).
+    * A [.gitconfig](/.gitconfig) file has been pre-configured to support
+      properly managing line endings inside the repository using the correct
+      `core.autocrlf` setting (`false`).
 * [`pre-commit`](https://pre-commit.com/)
     * [.pre-commit-config.yaml](/.pre-commit-config.yaml) file is provided with some relatively sane
       default hooks. Feel free to adjust to your liking.
@@ -53,62 +56,46 @@ This template repository is set up to support the following:
 
 ## Setup ##
 
-1. Install `python`.
-
-See your operating system documentation for relevant instructions.
-
-2. Install `pipx`.
-
-```sh
-# === Ubuntu >=23.04/Debian ===
-sudo apt update
-sudo apt install pipx
-pipx ensurepath
-# Optionally, to allow --global
-sudo pipx ensurepath --global
-
-# === Fedora ===
-sudo dnf install pipx
-pipx ensurepath
-# Optionally, to allow --global
-sudo pipx ensurepath --global
-
-# === Arch Linux ===
-sudo pacman -S python-pipx
-pipx ensurepath
-# Optionally, to allow --global
-sudo pipx ensurepath --global
-
-# === macOS ===
-brew install pipx
-pipx ensurepath
-# Optionally, to allow --global
-sudo pipx ensurepath --global
-
-# === Windows via Scoop ===
-scoop install pipx
-pipx ensurepath
-
-# === Via pip everywhere else ===
-python3 -m pip install --user pipx
-python3 -m pipx ensurepath
-# Optionally, to allow --global if applicable
-sudo pipx ensurepath --global
+1. Update the following files:
+    * `README.md`
+        * Update the title.
+        * Update the description.
+        * Remove everything else except license.
+    * `LICENSE.md`
+        * Change license to your project license.
+    * `CONTRIBUTING.md`
+        * Update code style guidelines (if applicable).
+    * `CODE_OF_CONDUCT.md`
+        * Update project administrators (if applicable).
+    * `SECURITY.md`
+        * Update where to report security vulnerabilities.
+        * Update support versions table.
+    * `.cspell/dictionaries/project.txt`
+        * Remove all words and add those you do need.
+    * `.github/FUNDING.yml`
+        * Add your funding information (if applicable).
+    * `.github/CODEOWNERS`
+        * Set your code owners (if applicable).
+1. Link `.gitconfig` into repository config by adding the following snippet into
+   your local `.git/config` at the top:
+```ini
+[include]
+    path="../.gitconfig"
 ```
-
-See [the `pipx` website](https://pipx.pypa.io/stable/) for more details.
-
-3. Install `pre-commit`.
-
-```sh
-pipx install pre-commit
-pre-commit install
-```
-
-See [the `pre-commit` website](https://pre-commit.com/#install) for more
-details.
-
-4. Good to go!
+* [ ] Done
+2. Run `./scripts/setup-pre-commit.sh` to install and configure `pre-commit`.
+* [ ] Done
+3. Set up GitHub labels from the `.github/labels.yaml` file (if applicable).
+* [ ] Done
+4. Set up GitHub rulesets from the files inside `.github/samples/rulesets`
+   (if applicable).
+* [ ] Done
+5. Update GitHub Dependabot setup (if applicable).
+* [ ] Done
+6. Enable VSCode integrations.
+* [ ] Done
+7. Good to go!
+* [ ] Yay!
 
 ## License ##
 

@@ -1,0 +1,44 @@
+version: 2
+multi-ecosystem-groups:
+  infrastructure:
+    commit-message:
+      prefix: '[Dependency] '
+    pull-request-branch-name:
+      separator: /
+    schedule:
+      interval: weekly
+      day: wednesday
+      time: '12:00'
+      timezone: Canada/Mountain
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    assignees:
+      - glektarssza
+    labels:
+      - Dependency
+    groups:
+      production-version-updates:
+        applies-to: version-updates
+        dependency-type: production
+        patterns:
+          - '*'
+      development-version-updates:
+        applies-to: version-updates
+        dependency-type: development
+        patterns:
+          - '*'
+      production-security-updates:
+        applies-to: security-updates
+        dependency-type: production
+        patterns:
+          - '*'
+      development-security-updates:
+        applies-to: security-updates
+        dependency-type: development
+        patterns:
+          - '*'
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - '*'
+    rebase-strategy: auto
