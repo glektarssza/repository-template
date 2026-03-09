@@ -22,6 +22,9 @@
 - name: Need More Information
   description: There's not enough information to do anything with this.
   color: '9C7509'
+- name: Refactor
+  description: Related to refactoring code.
+  color: '6E89A9'
 - name: Release
   description: Related to releasing a new version.
   color: '63FDB7'
