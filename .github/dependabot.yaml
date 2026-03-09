@@ -1,8 +1,12 @@
 version: 2
 multi-ecosystem-groups:
-  infrastructure:
+  weekly-dependency-updates:
+    assignees:
+      - glektarssza
+    labels:
+      - Dependency
     commit-message:
-      prefix: '[Dependency] '
+      prefix: '[Dependabot] '
     pull-request-branch-name:
       separator: /
     schedule:
@@ -11,34 +15,22 @@ multi-ecosystem-groups:
       time: '12:00'
       timezone: Canada/Mountain
 updates:
-  - package-ecosystem: github-actions
-    directory: /
-    assignees:
-      - glektarssza
-    labels:
-      - Dependency
+  - directory: .github/workflows
+    package-ecosystem: github-actions
+    rebase-strategy: auto
     groups:
       production-version-updates:
         applies-to: version-updates
         dependency-type: production
-        patterns:
-          - '*'
       development-version-updates:
         applies-to: version-updates
         dependency-type: development
-        patterns:
-          - '*'
       production-security-updates:
         applies-to: security-updates
         dependency-type: production
-        patterns:
-          - '*'
       development-security-updates:
         applies-to: security-updates
         dependency-type: development
-        patterns:
-          - '*'
-    multi-ecosystem-group: infrastructure
+    multi-ecosystem-group: weekly-dependency-updates
     patterns:
       - '*'
-    rebase-strategy: auto
