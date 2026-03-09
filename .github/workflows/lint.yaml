@@ -46,7 +46,7 @@ jobs:
           python-version: '>=3'
       - id: setup-pre-commit
         name: Setup pre-commit
-        run: ./scripts/setup-pre-commit.sh
+        run: ./scripts/setup-pre-commit.sh --force
       - id: lint
         name: Lint
         run: |
