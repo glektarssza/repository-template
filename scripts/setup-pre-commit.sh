@@ -131,7 +131,7 @@ DISTRO="$(cat /etc/os-release | grep '^ID' | awk -F'=' '{print $2;}')"
 
 log_verbose "Determined OS distro to be \"${DISTRO}\""
 
-if [[ -n "${CI}" ]]; then
+if [[ -n "${CI}" && ! "$*" =~ \s*--force\s* ]]; then
     log_warning "Running in a CI environment, not setting up pre-commit!"
     exit 0
 fi
