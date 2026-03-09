@@ -3,7 +3,7 @@ name: Lint
 on:
   workflow_call:
     inputs:
-      ref:
+      git-ref:
         description: |
           The Git reference from which to clone the project.
 
@@ -46,6 +46,8 @@ on:
         description: |
           The token to use when making authenticated calls to the GitHub API.
         required: true
+env:
+  GITHUB_TOKEN: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
 jobs:
   spell-check:
     name: Spell Check
@@ -58,7 +60,7 @@ jobs:
         name: Checkout repository
         uses: actions/checkout@v6
         with:
-          ref: ${{inputs.ref}}
+          ref: ${{inputs.git-ref}}
           lfs: true
           submodules: recursive
           token: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
@@ -74,7 +76,7 @@ jobs:
         name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
-          token: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
+          token: ${{env.GITHUB_TOKEN}}
           node-version: ${{inputs.node-version}}
       - id: setup-non-pnpm-package-manager
         name: Setup NodeJS Package Manager
@@ -95,3 +97,7 @@ jobs:
             --stop-config-search-at ${{github.workspace}}  \
             --no-must-find-files --no-progress --no-cache \
             --gitignore-root ${{github.workspace}} .
+      - id: remove-package-manager
+        if: always() && inputs.package-manager != 'pnpm'
+        run: |
+          npm remove -g ${{inputs.package-manager}}

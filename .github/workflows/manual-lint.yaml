@@ -3,7 +3,7 @@ name: Manual Lint
 on:
   workflow_dispatch:
 env:
-  GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
   lint:
     name: Lint

@@ -39,7 +39,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/spell-check.yaml
     with:
-      ref: ${{github.sha}}
+      git-ref: ${{github.sha}}
       node-version: ${{inputs.node-version}}
       package-manager: ${{inputs.package-manager}}
       package-manager-version: ${{inputs.package-manager-version}}

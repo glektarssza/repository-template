@@ -1,11 +1,9 @@
 # yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
-name: On Pull request
+name: On Push
 on:
-  pull_request:
-    branches:
-      - main
+  push:
 env:
-  GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
   lint:
     name: Lint
