@@ -32,32 +32,32 @@ declare _LIB_LOGGING_GUARD
 source "${_LIB_PATH}/sgr.sh"
 
 # Log an error message to the standard error stream.
-function log_error() {
-    sgr_8bit_fg "196" >&2 && printf "[ERROR]" >&2 && sgr_reset >&2 \
+function lib::log::error() {
+    lib::sgr::8bit::foreground "196" >&2 && printf "[ERROR]" >&2 && lib::sgr::reset >&2 \
         && printf " %s\n" "$*" >&2
     return $?
 }
 
 # Log a warning message to the standard output stream.
-function log_warning() {
-    sgr_8bit_fg "214" && printf "[WARN]" && sgr_reset \
+function lib::log::warn() {
+    lib::sgr::8bit::foreground "214" && printf "[WARN]" && lib::sgr::reset \
         && printf " %s\n" "$*"
     return $?
 }
 
 # Log an information message to the standard output stream.
-function log_info() {
-    sgr_8bit_fg "111" && printf "[INFO]" && sgr_reset \
+function lib::log::info() {
+    lib::sgr::8bit::foreground "111" && printf "[INFO]" && lib::sgr::reset \
         && printf " %s\n" "$*"
     return $?
 }
 
 # Log a verbose message to the standard output stream.
-function log_verbose() {
+function lib::log::verbose() {
     if [[ ! -n "${VERBOSE}" || ! "${VERBOSE,,}" =~ 1|true ]]; then
         return 0
     fi
-    sgr_8bit_fg "171" && printf "[VERBOSE]" && sgr_reset \
+    lib::sgr::8bit::foreground "171" && printf "[VERBOSE]" && lib::sgr::reset \
         && printf " %s\n" "$*"
     return $?
 }

@@ -44,7 +44,7 @@ function install_system_package() {
     PACKAGE_NAME="$1"
     shift
     if [[ -z "${PACKAGE_NAME}" ]]; then
-        log_error "install_system_package: A package name is required!"
+        lib::log::error "install_system_package: A package name is required!"
     fi
     case "${DISTRO}" in
         arch)
@@ -56,34 +56,34 @@ function install_system_package() {
             PACMAN_FLAGS=(install --assume-yes --no-install-recommends)
             ;;
         *)
-            log_error "install_system_package: Unsupported distro \"${DISTRO}\"!"
+            lib::log::error "install_system_package: Unsupported distro \"${DISTRO}\"!"
             ;;
     esac
     read -ra PACMAN_FLAGS > /dev/null 2>&1 < <(echo "${PACMAN_FLAGS[*]} $*")
-    log_info "We're going to attempt to install \"${PACKAGE_NAME}\", this will require admin permissions!"
+    lib::log::info "We're going to attempt to install \"${PACKAGE_NAME}\", this will require admin permissions!"
     if [[ ! -x "${PACMAN}" ]]; then
-        log_warning "Unable to execute \"${PACMAN}\" as we are, trying to elevate..."
+        lib::log::warn "Unable to execute \"${PACMAN}\" as we are, trying to elevate..."
         if command -v sudo >&/dev/null; then
-            if ! prompt_to_continue "We're about to run 'sudo \"${SHELL}\" -i -c \"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
-                log_error "Not authorized, aborting install!"
+            if ! lib::io::prompt_to_continue "We're about to run 'sudo \"${SHELL}\" -i -c \"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
+                lib::log::error "Not authorized, aborting install!"
                 STATUS_CODE=1
             else
-                log_verbose "Trying to elevate via \"sudo\"..."
+                lib::log::verbose "Trying to elevate via \"sudo\"..."
                 sudo --login eval "${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}"
                 STATUS_CODE=$?
             fi
         elif command -v su >&/dev/null; then
-            if ! prompt_to_continue "We're about to run 'su --login --command=\n\"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
-                log_error "Not authorized, aborting install!"
+            if ! lib::io::prompt_to_continue "We're about to run 'su --login --command=\n\"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
+                lib::log::error "Not authorized, aborting install!"
                 STATUS_CODE=1
             else
-                log_verbose "Trying to elevate via \"su\"..."
+                lib::log::verbose "Trying to elevate via \"su\"..."
                 su --login --command="${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}"
                 STATUS_CODE=$?
             fi
 
         else
-            log_error "Failed to elevate: unable to find compatible suid program!"
+            lib::log::error "Failed to elevate: unable to find compatible suid program!"
             STATUS_CODE=1
         fi
     else
@@ -91,7 +91,7 @@ function install_system_package() {
         STATUS_CODE=$?
     fi
     if [[ "${STATUS_CODE}" != "0" ]]; then
-        log_verbose "\"${PACMAN}\" exited with code \"${STATUS_CODE}\"!"
+        lib::log::verbose "\"${PACMAN}\" exited with code \"${STATUS_CODE}\"!"
     fi
     return ${STATUS_CODE}
 }

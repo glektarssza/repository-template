@@ -36,7 +36,7 @@ declare _LIB_STRINGS_GUARD
 # === Returns ===
 # `0` - The operation succeeded.
 # `*` - The operation failed.
-function to_lower_case() {
+function lib::strings::to_lower_case() {
     if ! echo "$1" | tr '[:upper:]' '[:lower:]'; then
         return 1
     fi
@@ -51,7 +51,7 @@ function to_lower_case() {
 # === Returns ===
 # `0` - The operation succeeded.
 # `*` - The operation failed.
-function to_upper_case() {
+function lib::strings::to_lupper_case() {
     if ! echo "$1" | tr '[:lower:]' '[:upper:]'; then
         return 1
     fi
