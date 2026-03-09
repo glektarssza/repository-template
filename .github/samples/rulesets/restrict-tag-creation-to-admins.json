@@ -1,5 +1,5 @@
 {
-    "name": "Prevent the creation of tags by non-admins",
+    "name": "Restrict tag creation to admins",
     "target": "tag",
     "enforcement": "active",
     "conditions": {
