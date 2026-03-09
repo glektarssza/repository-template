@@ -33,7 +33,7 @@ declare _LIB_SGR_GUARD
 # The SGR reset ANSI code.
 # === Returns ===
 # The result of calling `printf`.
-function sgr_reset() {
+function lib::sgr::reset() {
     printf "\e[0m"
     return $?
 }
@@ -47,7 +47,7 @@ function sgr_reset() {
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
-function sgr_4bit_fg() {
+function lib::sgr::4bit::foreground() {
     if [[ -z "$1" ]]; then
         return 1
     fi
@@ -67,7 +67,7 @@ function sgr_4bit_fg() {
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
-function sgr_4bit_bg() {
+function lib::sgr::4bit::background() {
     if [[ -z "$1" ]]; then
         return 1
     fi
@@ -87,7 +87,7 @@ function sgr_4bit_bg() {
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
-function sgr_8bit_fg() {
+function lib::sgr::8bit::foreground() {
     if [[ -z "$1" ]]; then
         return 1
     fi
@@ -107,7 +107,7 @@ function sgr_8bit_fg() {
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
-function sgr_8bit_bg() {
+function lib::sgr::8bit::background() {
     if [[ -z "$1" ]]; then
         return 1
     fi
@@ -129,7 +129,7 @@ function sgr_8bit_bg() {
 # `1` - If one of the color code was not provided.
 # `2` - If one of the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
-function sgr_24bit_fg() {
+function lib::sgr::24bit::foreground() {
     if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
         return 1
     fi
@@ -151,7 +151,7 @@ function sgr_24bit_fg() {
 # `1` - If one of the color code was not provided.
 # `2` - If one of the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
-function sgr_24bit_bg() {
+function lib::sgr::24bit::background() {
     if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
         return 1
     fi

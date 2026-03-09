@@ -41,15 +41,15 @@ source "${_LIB_PATH}/strings.sh"
 # `0` - Okay to continue.
 # `1` - Not okay to continue.
 # `2` - Some other error.
-function prompt_to_continue() {
+function lib::io::prompt_to_continue() {
     local PROMPT="$1"
     local DEFAULT_RESP="${2:-y}"
     local RESP=""
     if [[ -z "${PROMPT}" ]]; then
-        log_error "No prompt provided to 'prompt_to_continue'!"
+        lib::log::error "prompt_to_continue: No prompt provided!"
         return 2
     fi
-    if [[ "$(to_lower_case "${DEFAULT_RESP}")" == "y" ]]; then
+    if [[ "$(lib::strings::to_lower_case "${DEFAULT_RESP}")" == "y" ]]; then
         PROMPT="${PROMPT}\nIs this okay? [Y/n] "
     else
         PROMPT="${PROMPT}\nIs this okay? [y/N] "
@@ -57,12 +57,12 @@ function prompt_to_continue() {
     while true; do
         printf "%b" "${PROMPT}"
         read -r RESP
-        case "$(to_lower_case "${RESP:-${DEFAULT_RESP}}")" in
+        case "$(lib::strings::to_lower_case "${RESP:-${DEFAULT_RESP}}")" in
             y) return 0 ;;
             n) return 1 ;;
             *)
                 RESP=""
-                log_error "Invalid response \"${RESP}\"! Please try again!"
+                lib::log::error "Invalid response \"${RESP}\"! Please try again!"
                 ;;
         esac
     done
