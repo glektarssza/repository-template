@@ -24,6 +24,8 @@
                 "refs/heads/bug-fix/**/*",
                 "refs/heads/bugfix/*",
                 "refs/heads/bugfix/**/*",
+                "refs/heads/refactor/*",
+                "refs/heads/refactor/**/*",
                 "refs/heads/release/v*",
                 "refs/heads/security/*",
                 "refs/heads/security/**/*",
