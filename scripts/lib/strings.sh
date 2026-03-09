@@ -51,7 +51,7 @@ function lib::strings::to_lower_case() {
 # === Returns ===
 # `0` - The operation succeeded.
 # `*` - The operation failed.
-function lib::strings::to_lupper_case() {
+function lib::strings::to_upper_case() {
     if ! echo "$1" | tr '[:lower:]' '[:upper:]'; then
         return 1
     fi
