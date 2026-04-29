@@ -1,0 +1,24 @@
+{
+  "id": 15606978,
+  "name": "Require tags to following naming conventions",
+  "target": "tag",
+  "source_type": "Repository",
+  "source": "glektarssza/minecraft-gtnh-customizer",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [
+        "refs/tags/v*"
+      ],
+      "include": [
+        "~ALL"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "creation"
+    }
+  ],
+  "bypass_actors": []
+}

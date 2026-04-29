@@ -1,0 +1,28 @@
+{
+  "id": 15606957,
+  "name": "Prevent direct updates to the default branch by non-admins",
+  "target": "branch",
+  "source_type": "Repository",
+  "source": "glektarssza/minecraft-gtnh-customizer",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": [
+        "~DEFAULT_BRANCH"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "update"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 5,
+      "actor_type": "RepositoryRole",
+      "bypass_mode": "always"
+    }
+  ]
+}
