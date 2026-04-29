@@ -1,25 +1,20 @@
 {
-  "id": 15606965,
-  "name": "Prevent force pushes or deletion of the default branch",
-  "target": "branch",
-  "source_type": "Repository",
-  "source": "glektarssza/minecraft-gtnh-customizer",
-  "enforcement": "active",
-  "conditions": {
-    "ref_name": {
-      "exclude": [],
-      "include": [
-        "~DEFAULT_BRANCH"
-      ]
-    }
-  },
-  "rules": [
-    {
-      "type": "deletion"
+    "name": "Prevent force pushes or deletion of the default branch",
+    "target": "branch",
+    "enforcement": "active",
+    "conditions": {
+        "ref_name": {
+            "exclude": [],
+            "include": ["~DEFAULT_BRANCH"]
+        }
     },
-    {
-      "type": "non_fast_forward"
-    }
-  ],
-  "bypass_actors": []
+    "rules": [
+        {
+            "type": "deletion"
+        },
+        {
+            "type": "non_fast_forward"
+        }
+    ],
+    "bypass_actors": []
 }
