@@ -1,26 +1,31 @@
-# shellcheck shell=bash
-
-if ! functions get_script_dir > /dev/null 2>&1; then
+if ! SCRIPT_DIR="$( (
+    # Get the directory the script is running from.
+    # === Outputs ===
+    # The path to the directory the script is running from.
+    # === Returns ===
+    # `0` - the function succeeded.
+    # `1` - a `cd` call failed.
+    # `2` - a `popd` call failed.
     function get_script_dir() {
-        pushd . > /dev/null 2>&1
+        pushd . 2>&1 > /dev/null || return 1
         local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
         while [[ -L "${SCRIPT_PATH}" ]]; do
-            cd "$(dirname -- "${SCRIPT_PATH}")" || return 1
+            cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
             SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
         done
-        cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 1
+        cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 2
         SCRIPT_PATH="$(pwd)"
-        # shellcheck disable=SC2164
-        popd > /dev/null 2>&1
+        popd 2>&1 > /dev/null || return 3
         echo "${SCRIPT_PATH}"
         return 0
     }
-else
-    export -f get_script_dir
+    get_script_dir
+))"; then
+    return 1
 fi
 
 if [[ -z "${_LIB_PATH}" ]]; then
-    _LIB_PATH="$(get_script_dir)"
+    _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}")"
 fi
 
 if [[ -n "${_LIB_STRINGS_GUARD+x}" ]]; then

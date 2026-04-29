@@ -1,26 +1,31 @@
-# shellcheck shell=bash
-
-if ! functions get_script_dir > /dev/null 2>&1; then
+if ! SCRIPT_DIR="$( (
+    # Get the directory the script is running from.
+    # === Outputs ===
+    # The path to the directory the script is running from.
+    # === Returns ===
+    # `0` - the function succeeded.
+    # `1` - a `cd` call failed.
+    # `2` - a `popd` call failed.
     function get_script_dir() {
-        pushd . > /dev/null 2>&1
+        pushd . 2>&1 > /dev/null || return 1
         local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
         while [[ -L "${SCRIPT_PATH}" ]]; do
-            cd "$(dirname -- "${SCRIPT_PATH}")" || return 1
+            cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
             SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
         done
-        cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 1
+        cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 2
         SCRIPT_PATH="$(pwd)"
-        # shellcheck disable=SC2164
-        popd > /dev/null 2>&1
+        popd 2>&1 > /dev/null || return 3
         echo "${SCRIPT_PATH}"
         return 0
     }
-else
-    export -f get_script_dir
+    get_script_dir
+))"; then
+    return 1
 fi
 
 if [[ -z "${_LIB_PATH}" ]]; then
-    _LIB_PATH="$(get_script_dir)"
+    _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}")"
 fi
 
 if [[ -n "${_LIB_IO_GUARD+x}" ]]; then
@@ -46,7 +51,7 @@ function lib::io::prompt_to_continue() {
     local DEFAULT_RESP="${2:-y}"
     local RESP=""
     if [[ -z "${PROMPT}" ]]; then
-        lib::log::error "prompt_to_continue: No prompt provided!"
+        lib::logging::error "No prompt provided to 'prompt_to_continue'!"
         return 2
     fi
     if [[ "$(lib::strings::to_lower_case "${DEFAULT_RESP}")" == "y" ]]; then
@@ -62,7 +67,7 @@ function lib::io::prompt_to_continue() {
             n) return 1 ;;
             *)
                 RESP=""
-                lib::log::error "Invalid response \"${RESP}\"! Please try again!"
+                lib::logging::error "Invalid response \"${RESP}\"! Please try again!"
                 ;;
         esac
     done
