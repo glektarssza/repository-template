@@ -88,15 +88,15 @@ if [[ -z "${PRE_COMMIT}" ]]; then
                     exit 1
                 fi
                 lib::logging::verbose "Trying to elevate via \"sudo\"..."
-                sudo --login eval "${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}"
+                sudo --login eval "${PACMAN} ${PACMAN_FLAGS[*]} ${PIPX_PACKAGE_NAME}"
                 STATUS_CODE=$?
             elif command -v su >&/dev/null; then
-                if ! lib::io::prompt_to_continue "We're about to run 'su --login --command=\n\"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
+                if ! lib::io::prompt_to_continue "We're about to run 'su --login --command=\n\"${PACMAN} ${PACMAN_FLAGS[*]} ${PIPX_PACKAGE_NAME}\"'." "n"; then
                     lib::logging::error "Aborting!"
                     exit 1
                 fi
                 lib::logging::verbose "Trying to elevate via \"su\"..."
-                su --login --command="${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}"
+                su --login --command="${PACMAN} ${PACMAN_FLAGS[*]} ${PIPX_PACKAGE_NAME}"
                 STATUS_CODE=$?
             else
                 lib::logging::error "Failed to elevate!"
@@ -104,7 +104,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
             fi
             "${PACMAN}" "${PACMAN_FLAGS[*]}" pipx
             STATUS_CODE=$?
-            lib::log::error "Failed to install \"${PACKAGE_NAME}\"!"
+            lib::log::error "Failed to install \"${PIPX_PACKAGE_NAME}\"!"
             exit ${STATUS_CODE}
         else
             lib::log::info "\"${PIPX_PACKAGE_NAME}\" is already installed!"
