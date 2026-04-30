@@ -35,17 +35,28 @@ source "${_LIB_PATH}/logging.sh"
 # shellcheck source=./lib/io.sh
 source "${_LIB_PATH}/io.sh"
 
+declare -A EXIT_CODES=(
+    [SUCCESS]=0
+    [RUNNING_IN_CI_ENVIRONMENT]=0
+)
+
+declare -A EXIT_MESSAGES=(
+    [SUCCESS]="Successfully set up pre-commit!"
+    [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up pre-commit!"
+)
+
 # The path to the project root directory
 PROJECT_ROOT="$(readlink -f -- "${SCRIPT_DIR}/..")"
 
 # Determine our distribution
-DISTRO="$(get_distro)"
+DISTRO="$(lib::os::get_distro)"
 
 lib::logging::verbose "Determined OS distro to be \"${DISTRO}\""
 
 if [[ -n "${CI}" ]]; then
-    lib::logging::warning "Running in a CI environment, not setting up pre-commit!"
-    exit 0
+    lib::logging::warning "${EXIT_MESSAGES[SUCCESS]}"
+    # shellcheck disable=SC2086
+    exit ${EXIT_CODES[SUCCESS]}
 fi
 
 # Locate pre-commit
@@ -94,7 +105,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
             lib::log::error "Failed to install \"${PACKAGE_NAME}\"!"
             exit ${STATUS_CODE}
         else
-            lib::log::info "\"${PIPX_PACKAGE_NAME}\" was installed successfully!"
+            lib::log::info "\"${PIPX_PACKAGE_NAME}\" is already installed!"
         fi
         if [[ "${STATUS_CODE}" != "0" ]]; then
             lib::logging::verbose "\"${PACMAN}\" exited with code \"${STATUS_CODE}\"!"

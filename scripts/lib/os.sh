@@ -1,26 +1,31 @@
-# shellcheck shell=bash
-
-if ! functions get_script_dir > /dev/null 2>&1; then
+if ! SCRIPT_DIR="$( (
+    # Get the directory the script is running from.
+    # === Outputs ===
+    # The path to the directory the script is running from.
+    # === Returns ===
+    # `0` - the function succeeded.
+    # `1` - a `cd` call failed.
+    # `2` - a `popd` call failed.
     function get_script_dir() {
-        pushd . > /dev/null 2>&1
+        pushd . 2>&1 > /dev/null || return 1
         local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
         while [[ -L "${SCRIPT_PATH}" ]]; do
-            cd "$(dirname -- "${SCRIPT_PATH}")" || return 1
+            cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
             SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
         done
-        cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 1
+        cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 2
         SCRIPT_PATH="$(pwd)"
-        # shellcheck disable=SC2164
-        popd > /dev/null 2>&1
+        popd 2>&1 > /dev/null || return 3
         echo "${SCRIPT_PATH}"
         return 0
     }
-else
-    export -f get_script_dir
+    get_script_dir
+))"; then
+    return 1
 fi
 
 if [[ -z "${_LIB_PATH}" ]]; then
-    _LIB_PATH="$(get_script_dir)"
+    _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}")"
 fi
 
 if [[ -n "${_LIB_OS_GUARD+x}" ]]; then
@@ -32,15 +37,15 @@ declare _LIB_OS_GUARD
 source "${_LIB_PATH}/logging.sh"
 
 # Get the Linux distro the script is currently being run on.
-function get_distro() {
+function lib::os::get_distro() {
     cat /etc/os-release | grep '^ID' | awk -F'=' '{print $2;}' 2> /dev/null
     return $?
 }
 
-function install_system_package() {
+function lib::os::install_system_package() {
     local -a PACMAN_FLAGS
     local PACMAN PACKAGE_NAME DISTRO STATUS_CODE
-    DISTRO="$(get_distro)"
+    DISTRO="$(lib::os::get_distro)"
     PACKAGE_NAME="$1"
     shift
     if [[ -z "${PACKAGE_NAME}" ]]; then
@@ -87,7 +92,7 @@ function install_system_package() {
             STATUS_CODE=1
         fi
     else
-        exec "${PACMAN}" "${PACMAN_FLAGS[*]}" pipx
+        "${PACMAN}" "${PACMAN_FLAGS[*]}" "${PACKAGE_NAME}"
         STATUS_CODE=$?
     fi
     if [[ "${STATUS_CODE}" != "0" ]]; then
