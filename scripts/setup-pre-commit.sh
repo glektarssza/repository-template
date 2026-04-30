@@ -34,6 +34,8 @@ _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}/lib/")"
 source "${_LIB_PATH}/logging.sh"
 # shellcheck source=./lib/io.sh
 source "${_LIB_PATH}/io.sh"
+# shellcheck source=./lib/os.sh
+source "${_LIB_PATH}/os.sh"
 
 declare -A EXIT_CODES=(
     [SUCCESS]=0
