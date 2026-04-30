@@ -56,9 +56,9 @@ DISTRO="$(lib::os::get_distro)"
 lib::logging::verbose "Determined OS distro to be \"${DISTRO}\""
 
 if [[ -n "${CI}" ]]; then
-    lib::logging::warning "${EXIT_MESSAGES[SUCCESS]}"
+    lib::logging::warning "${EXIT_MESSAGES[RUNNING_IN_CI_ENVIRONMENT]}"
     # shellcheck disable=SC2086
-    exit ${EXIT_CODES[SUCCESS]}
+    exit ${EXIT_CODES[RUNNING_IN_CI_ENVIRONMENT]}
 fi
 
 # Locate pre-commit
@@ -112,7 +112,8 @@ if [[ -z "${PRE_COMMIT}" ]]; then
         if [[ "${STATUS_CODE}" != "0" ]]; then
             lib::logging::verbose "\"${PACMAN}\" exited with code \"${STATUS_CODE}\"!"
             lib::logging::error "Failed to install \"pipx\"!"
-            exit $STATUS_CODE
+            # shellcheck disable=SC2086
+            exit ${STATUS_CODE}
         fi
         lib::logging::info "\"pipx\" was installed successfully!"
     fi
