@@ -1,6 +1,6 @@
 [core]
-    # This is mandatory as it prevents encoding/line ending issues!
+    # Prevents encoding/line ending issues!
     autocrlf = false
-    # This is recommended to warn about issues, it can also be set to `true` to
-    # enforce the above.
+    # Warn about EOL issues.
 	safecrlf = warn
+    hookspath = ".hooks/git/"

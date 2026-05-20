@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set +x +e
 
-# -- OPTIONAL: Run our cleanup routine on exit
-# trap cleanup EXIT
-
 SCRIPT_DIR="$( (
     # Get the directory the script is running from.
     # === Outputs ===
@@ -17,7 +14,7 @@ SCRIPT_DIR="$( (
         local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
         while [[ -L "${SCRIPT_PATH}" ]]; do
             cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
-            SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
+            SCRIPT_PATH="$(readlink -e -- "$SCRIPT_PATH")"
         done
         cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 2
         SCRIPT_PATH="$(pwd)"
@@ -28,7 +25,7 @@ SCRIPT_DIR="$( (
     get_script_dir
 ))"
 
-_LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}/lib/")"
+_LIB_PATH="$(readlink -e -- "${SCRIPT_DIR}/lib/")"
 
 # shellcheck source=./lib/logging.sh
 source "${_LIB_PATH}/logging.sh"
@@ -47,12 +44,14 @@ declare -A EXIT_MESSAGES=(
     [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up pre-commit!"
 )
 
-# The path to the project root directory
-PROJECT_ROOT="$(readlink -f -- "${SCRIPT_DIR}/..")"
+# -- The path to the project root directory
+PROJECT_ROOT="$(readlink -e -- "${SCRIPT_DIR}/../")"
 
-# Determine our distribution
+# -- Determine our distribution
 DISTRO="$(lib::os::get_distro)"
 
+lib::logging::verbose "Determined script path to be at \"${SCRIPT_DIR}\""
+lib::logging::verbose "Determined project root to be at \"${PROJECT_ROOT}\""
 lib::logging::verbose "Determined OS distro to be \"${DISTRO}\""
 
 if [[ -n "${CI}" ]]; then
@@ -156,22 +155,54 @@ if ! pushd "${PROJECT_ROOT}" > /dev/null 2>&1; then
     lib::logging::error "Failed to enter project root directory!"
     exit 1
 fi
-
-lib::logging::info "Installing pre-commit hooks..."
-printf "%b=== pre-commit output ===%b\n" "$(lib::sgr::8bit_fg 163)" "$(lib::sgr::reset)"
-"${PRE_COMMIT}" install --hook-type pre-commit --hook-type pre-push
+lib::logging::info "Checking if \"pre-commit\" hooks need to be installed..."
+if [[ -n "$(sed -nE 'N;/\[include\]\n\s*path\s?=\s?("?)\.\.\/\.gitconfig\1/p' ".git/config" 2> /dev/null)" ]]; then
+    lib::logging::info "\"pre-commit\" hooks already installed, skipping!"
+    exit 0
+fi
+lib::logging::info "Installing \"pre-commit\" hooks..."
+lib::logging::verbose "Creating working copy of Git config..."
+if lib::logging::is_verbose_enabled; then
+    lib::logging::verbose "Git config should be at \"${GIT_CONFIG}\"..."
+    cp "${PROJECT_ROOT}/.git/config" "${PROJECT_ROOT}/.git/config.tmp"
+else
+    cp "${PROJECT_ROOT}/.git/config" "${PROJECT_ROOT}/.git/config.tmp" > /dev/null 2>&1
+fi
 STATUS_CODE=$?
-printf "%b=== pre-commit output ===%b\n" "$(lib::sgr::8bit_fg 163)" "$(lib::sgr::reset)"
-lib::logging::verbose "\"pre-commit\" exited with code \"${STATUS_CODE}\""
+lib::logging::verbose "\"cp\" exited with code \"${STATUS_CODE}\""
 if [[ "${STATUS_CODE}" != "0" ]]; then
-    lib::logging::error "Failed to install pre-commit hooks!"
+    lib::logging::error "Failed to create working copy of Git config!"
     exit $STATUS_CODE
 fi
-
+lib::logging::verbose "Adding custom hooks directory to Git config via \"sed\"..."
+if lib::logging::is_verbose_enabled; then
+    sed -i '1i [include]\n    path = ../.gitconfig' "${PROJECT_ROOT}/.git/config.tmp"
+else
+    sed -i '1i [include]\n    path = ../.gitconfig' "${PROJECT_ROOT}/.git/config.tmp" > /dev/null 2>&1
+fi
+STATUS_CODE=$?
+lib::logging::verbose "\"sed\" exited with code \"${STATUS_CODE}\""
+if [[ "${STATUS_CODE}" != "0" ]]; then
+    lib::logging::error "Failed to install \"pre-commit\" hooks!"
+    exit $STATUS_CODE
+fi
+lib::logging::verbose "Overwriting original Git config with updated working copy..."
+if lib::logging::is_verbose_enabled; then
+    mv -f "${PROJECT_ROOT}/.git/config.tmp" "${PROJECT_ROOT}/.git/config"
+else
+    mv -f "${PROJECT_ROOT}/.git/config.tmp" "${PROJECT_ROOT}/.git/config" > /dev/null 2>&1
+fi
+STATUS_CODE=$?
+lib::logging::verbose "\"mv\" exited with code \"${STATUS_CODE}\""
+if [[ "${STATUS_CODE}" != "0" ]]; then
+    lib::logging::error "Failed to overwrite original Git config with updated working copy!"
+    exit $STATUS_CODE
+fi
+lib::logging::info "\"pre-commit\" hooks installed successfully"
 if ! popd > /dev/null 2>&1; then
     lib::logging::error "Failed to exit project root directory!"
     exit 1
 fi
 
-# On success, exit
+# On success, exit normally
 exit 0

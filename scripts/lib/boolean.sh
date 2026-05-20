@@ -30,37 +30,38 @@ if [[ -z "${_LIB_PATH}" ]]; then
     fi
 fi
 
-if [[ -n "${_LIB_STRINGS_GUARD+x}" ]]; then
+if [[ -n "${_LIB_BOOLEAN_GUARD+x}" ]]; then
     return 0
 fi
-declare _LIB_STRINGS_GUARD
+declare _LIB_BOOLEAN_GUARD
 
-# Convert a string to all lower case.
-# === Inputs ===
-# `$1` - The string to convert.
-# === Outputs ===
-# The converted string.
-# === Returns ===
-# `0` - The operation succeeded.
-# `*` - The operation failed.
-function lib::strings::to_lower_case() {
-    if ! echo "$1" | tr '[:upper:]' '[:lower:]'; then
-        return 1
+# shellcheck source=./sgr.sh
+source "${_LIB_PATH}/strings.sh"
+
+# The numerical value considered to be "true".
+export TRUE=0
+
+# The numerical value considered to be "false".
+export FALSE=1
+
+# Get whether the input value is truthy ("1" or the string "true", lower or upper
+# case.)
+function lib::boolean::is_truthy() {
+    if [[ "$(lib::strings::to_lower_case "${1,,}")" =~ 1|true ]]; then
+        # shellcheck disable=SC2086
+        return ${TRUE}
     fi
-    return 0
+    # shellcheck disable=SC2086
+    return ${FALSE}
 }
 
-# Convert a string to all upper case.
-# === Inputs ===
-# `$1` - The string to convert.
-# === Outputs ===
-# The converted string.
-# === Returns ===
-# `0` - The operation succeeded.
-# `*` - The operation failed.
-function lib::strings::to_upper_case() {
-    if ! echo "$1" | tr '[:lower:]' '[:upper:]'; then
-        return 1
+# Get whether the input value is truthy (any numeric value other than "1" or any
+# string other than the string "true", lower or uppercase.)
+function lib::boolean::is_falsy() {
+    if ! lib::boolean::is_truthy "$1"; then
+        # shellcheck disable=SC2086
+        return ${TRUE}
     fi
-    return 0
+    # shellcheck disable=SC2086
+    return ${FALSE}
 }

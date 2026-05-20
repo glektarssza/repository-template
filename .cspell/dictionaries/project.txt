@@ -3,6 +3,7 @@ ensurepath
 generis
 glek
 glektarssza
+hookspath
 mapfile
 netrwhist
 noconfirm
