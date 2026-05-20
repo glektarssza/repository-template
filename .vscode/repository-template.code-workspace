@@ -1,0 +1,11 @@
+{
+    "folders": [
+        {
+            "name": "Repostory Template",
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "github.branchProtection": false
+    }
+}
