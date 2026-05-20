@@ -93,10 +93,9 @@ jobs:
       - id: check-spelling
         name: Check Spelling
         run: |
-          cspell lint --no-issues --root ${{github.workspace}} --no-color \
-            --stop-config-search-at ${{github.workspace}}  \
-            --no-must-find-files --no-progress --no-cache \
-            --gitignore-root ${{github.workspace}} .
+          cspell lint --root ${{github.workspace}} --no-color --no-cache \
+            --stop-config-search-at ${{github.workspace}} --no-progress \
+            --no-must-find-files --gitignore-root ${{github.workspace}} .
       - id: remove-package-manager
         if: always() && inputs.package-manager != 'pnpm'
         run: |
