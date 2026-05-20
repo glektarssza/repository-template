@@ -55,7 +55,7 @@ function lib::logging::error() {
 }
 
 # Log a warning message to the standard output stream.
-function lib::logging::warning() {
+function lib::logging::warn() {
     lib::sgr::8bit_fg "214" && printf "[WARN]" && lib::sgr::reset && printf " %s\n" "$*"
     return $?
 }

@@ -40,32 +40,33 @@ declare -A EXIT_CODES=(
 )
 
 declare -A EXIT_MESSAGES=(
-    [SUCCESS]="Successfully set up pre-commit!"
-    [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up pre-commit!"
+    [SUCCESS]="Successfully installed \"pre-commit\"!"
+    [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up Git hooks!"
 )
-
-# -- The path to the project root directory
-PROJECT_ROOT="$(readlink -e -- "${SCRIPT_DIR}/../")"
 
 # -- Determine our distribution
 DISTRO="$(lib::os::get_distro)"
 
-lib::logging::verbose "Determined script path to be at \"${SCRIPT_DIR}\""
-lib::logging::verbose "Determined project root to be at \"${PROJECT_ROOT}\""
-lib::logging::verbose "Determined OS distro to be \"${DISTRO}\""
-
 if [[ -n "${CI}" ]]; then
-    lib::logging::warning "${EXIT_MESSAGES[RUNNING_IN_CI_ENVIRONMENT]}"
-    # shellcheck disable=SC2086
-    exit ${EXIT_CODES[RUNNING_IN_CI_ENVIRONMENT]}
+    if [[ $* =~ .*--force.* ]]; then
+        lib::logging::warn "Running in a CI environment but requested bypass of CI flag skip!"
+        lib::logging::warn "Hope you know what you're doing!"
+    else
+        lib::logging::warn "${EXIT_MESSAGES[RUNNING_IN_CI_ENVIRONMENT]}"
+        # shellcheck disable=SC2086
+        exit ${EXIT_CODES[RUNNING_IN_CI_ENVIRONMENT]}
+    fi
 fi
+
+lib::logging::info "Starting \"pre-commit\" installation..."
+lib::logging::verbose "Checking for \"pre-commit\"..."
 
 # Locate pre-commit
 PRE_COMMIT="$(command -v pre-commit 2> /dev/null)"
 if [[ -z "${PRE_COMMIT}" ]]; then
-    lib::logging::warning "\"pre-commit\" is not installed, attempting to install via \"pipx\"!"
+    lib::logging::warn "\"pre-commit\" is not installed, attempting to install via \"pipx\"!"
     if ! which pipx > /dev/null 2>&1; then
-        lib::logging::warning "\"pipx\" is not installed, attempting to install!"
+        lib::logging::warn "\"pipx\" is not installed, attempting to install!"
         case "${DISTRO}" in
             arch)
                 PIPX_PACKAGE_NAME="python-pipx"
@@ -80,7 +81,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
         esac
         lib::logging::info "We're going to attempt to install \"pipx\", this will require admin permissions!"
         if [[ ! -x "${PACMAN}" ]]; then
-            lib::logging::warning "Unable to execute \"${PACMAN}\" as we are, trying to elevate..."
+            lib::logging::warn "Unable to execute \"${PACMAN}\" as we are, trying to elevate..."
             if command -v sudo >&/dev/null; then
                 if ! lib::io::prompt_to_continue "We're about to run 'sudo \"${SHELL}\" -i -c \"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
                     lib::logging::error "Aborting!"
@@ -126,7 +127,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
     lib::logging::info "\"pre-commit\" was installed successfully!"
     PRE_COMMIT="$(which pre-commit 2> /dev/null)"
     if [[ -z "${PRE_COMMIT}" ]]; then
-        lib::logging::warning "Still cannot find \"pre-commit\", trying some well-known locations..."
+        lib::logging::warn "Still cannot find \"pre-commit\", trying some well-known locations..."
         mapfile -t PRE_COMMIT_PATHS < <(find ~ -maxdepth 4 \( -type f -or -type l \) -name pre-commit -printf '%p\n')
         if [[ "${#PRE_COMMIT_PATHS[@]}" -le 0 ]]; then
             lib::logging::error "Failed to locate \"pre-commit\"!"
@@ -151,58 +152,6 @@ else
     lib::logging::verbose "\"pre-commit\" found at \"${PRE_COMMIT}\"!"
 fi
 
-if ! pushd "${PROJECT_ROOT}" > /dev/null 2>&1; then
-    lib::logging::error "Failed to enter project root directory!"
-    exit 1
-fi
-lib::logging::info "Checking if \"pre-commit\" hooks need to be installed..."
-if [[ -n "$(sed -nE 'N;/\[include\]\n\s*path\s?=\s?("?)\.\.\/\.gitconfig\1/p' ".git/config" 2> /dev/null)" ]]; then
-    lib::logging::info "\"pre-commit\" hooks already installed, skipping!"
-    exit 0
-fi
-lib::logging::info "Installing \"pre-commit\" hooks..."
-lib::logging::verbose "Creating working copy of Git config..."
-if lib::logging::is_verbose_enabled; then
-    lib::logging::verbose "Git config should be at \"${GIT_CONFIG}\"..."
-    cp "${PROJECT_ROOT}/.git/config" "${PROJECT_ROOT}/.git/config.tmp"
-else
-    cp "${PROJECT_ROOT}/.git/config" "${PROJECT_ROOT}/.git/config.tmp" > /dev/null 2>&1
-fi
-STATUS_CODE=$?
-lib::logging::verbose "\"cp\" exited with code \"${STATUS_CODE}\""
-if [[ "${STATUS_CODE}" != "0" ]]; then
-    lib::logging::error "Failed to create working copy of Git config!"
-    exit $STATUS_CODE
-fi
-lib::logging::verbose "Adding custom hooks directory to Git config via \"sed\"..."
-if lib::logging::is_verbose_enabled; then
-    sed -i '1i [include]\n    path = ../.gitconfig' "${PROJECT_ROOT}/.git/config.tmp"
-else
-    sed -i '1i [include]\n    path = ../.gitconfig' "${PROJECT_ROOT}/.git/config.tmp" > /dev/null 2>&1
-fi
-STATUS_CODE=$?
-lib::logging::verbose "\"sed\" exited with code \"${STATUS_CODE}\""
-if [[ "${STATUS_CODE}" != "0" ]]; then
-    lib::logging::error "Failed to install \"pre-commit\" hooks!"
-    exit $STATUS_CODE
-fi
-lib::logging::verbose "Overwriting original Git config with updated working copy..."
-if lib::logging::is_verbose_enabled; then
-    mv -f "${PROJECT_ROOT}/.git/config.tmp" "${PROJECT_ROOT}/.git/config"
-else
-    mv -f "${PROJECT_ROOT}/.git/config.tmp" "${PROJECT_ROOT}/.git/config" > /dev/null 2>&1
-fi
-STATUS_CODE=$?
-lib::logging::verbose "\"mv\" exited with code \"${STATUS_CODE}\""
-if [[ "${STATUS_CODE}" != "0" ]]; then
-    lib::logging::error "Failed to overwrite original Git config with updated working copy!"
-    exit $STATUS_CODE
-fi
-lib::logging::info "\"pre-commit\" hooks installed successfully"
-if ! popd > /dev/null 2>&1; then
-    lib::logging::error "Failed to exit project root directory!"
-    exit 1
-fi
-
-# On success, exit normally
-exit 0
+lib::logging::info "${EXIT_MESSAGES[SUCCESS]}"
+# shellcheck disable=SC2086
+exit ${EXIT_CODES[SUCCESS]}

@@ -63,7 +63,7 @@ function lib::os::install_system_package() {
             PACMAN_FLAGS=(install --assume-yes --no-install-recommends)
             ;;
         *)
-            lib::log::error "install_system_package: Unsupported distro \"${DISTRO}\"!"
+            lib::logging::error "install_system_package: Unsupported distro \"${DISTRO}\"!"
             ;;
     esac
     read -ra PACMAN_FLAGS > /dev/null 2>&1 < <(echo "${PACMAN_FLAGS[*]} $*")
