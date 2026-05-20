@@ -1,5 +1,5 @@
 {
-    "name": "Require tags to following naming conventions",
+    "name": "Require tags to use naming convention",
     "target": "tag",
     "enforcement": "active",
     "conditions": {

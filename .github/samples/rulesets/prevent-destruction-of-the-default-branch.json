@@ -1,5 +1,5 @@
 {
-    "name": "Prevent force pushes or deletion of the default branch",
+    "name": "Prevent destruction of the default branch",
     "target": "branch",
     "enforcement": "active",
     "conditions": {

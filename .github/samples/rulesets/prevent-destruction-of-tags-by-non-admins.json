@@ -1,5 +1,5 @@
 {
-    "name": "Prevent modification or creation of tags by non-admins",
+    "name": "Prevent destruction of tags by non-admins",
     "target": "tag",
     "enforcement": "active",
     "conditions": {

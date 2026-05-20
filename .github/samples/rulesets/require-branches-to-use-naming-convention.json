@@ -1,0 +1,40 @@
+{
+    "name": "Require branches to use naming convention",
+    "target": "branch",
+    "enforcement": "active",
+    "conditions": {
+        "ref_name": {
+            "exclude": [
+                "refs/heads/dependency/*",
+                "refs/heads/dependency/**/*",
+                "refs/heads/dependencies/*",
+                "refs/heads/dependencies/**/*",
+                "refs/heads/dependabot/*",
+                "refs/heads/dependabot/**/*",
+                "refs/heads/security/*",
+                "refs/heads/security/**/*",
+                "refs/heads/feature/*",
+                "refs/heads/feature/**/*",
+                "refs/heads/refactor/*",
+                "refs/heads/refactor/**/*",
+                "refs/heads/release/*",
+                "refs/heads/release/**/*",
+                "refs/heads/hotfix/*",
+                "refs/heads/hotfix/**/*",
+                "refs/heads/chore/*",
+                "refs/heads/chore/**/*",
+                "refs/heads/task/*",
+                "refs/heads/task/**/*",
+                "refs/heads/bug/*",
+                "refs/heads/bug/**/*"
+            ],
+            "include": ["~ALL"]
+        }
+    },
+    "rules": [
+        {
+            "type": "creation"
+        }
+    ],
+    "bypass_actors": []
+}

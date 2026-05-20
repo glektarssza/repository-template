@@ -1,5 +1,5 @@
 {
-    "name": "Prevent direct updates to the default branch by non-admins",
+    "name": "Prevent updating the default branch by non-admins",
     "target": "branch",
     "enforcement": "active",
     "conditions": {
