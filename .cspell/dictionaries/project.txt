@@ -4,7 +4,9 @@ generis
 glek
 glektarssza
 hookspath
+iregex
 mapfile
+mpre
 netrwhist
 noconfirm
 noninfringement
