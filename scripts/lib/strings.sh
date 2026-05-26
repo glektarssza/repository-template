@@ -12,7 +12,7 @@ if [[ -z "${_LIB_PATH}" ]]; then
             local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
             while [[ -L "${SCRIPT_PATH}" ]]; do
                 cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
-                SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
+                SCRIPT_PATH="$(readlink -e -- "$SCRIPT_PATH")"
             done
             cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 2
             SCRIPT_PATH="$(pwd)"
@@ -26,7 +26,7 @@ if [[ -z "${_LIB_PATH}" ]]; then
     fi
 
     if [[ -z "${_LIB_PATH}" ]]; then
-        _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}")"
+        _LIB_PATH="$(readlink -e -- "${SCRIPT_DIR}")"
     fi
 fi
 

@@ -12,7 +12,7 @@ if [[ -z "${_LIB_PATH}" ]]; then
             local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
             while [[ -L "${SCRIPT_PATH}" ]]; do
                 cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
-                SCRIPT_PATH="$(readlink -f -- "$SCRIPT_PATH")"
+                SCRIPT_PATH="$(readlink -e -- "$SCRIPT_PATH")"
             done
             cd "$(dirname -- "$SCRIPT_PATH")" > /dev/null || return 2
             SCRIPT_PATH="$(pwd)"
@@ -26,7 +26,7 @@ if [[ -z "${_LIB_PATH}" ]]; then
     fi
 
     if [[ -z "${_LIB_PATH}" ]]; then
-        _LIB_PATH="$(readlink -f -- "${SCRIPT_DIR}")"
+        _LIB_PATH="$(readlink -e -- "${SCRIPT_DIR}")"
     fi
 fi
 
@@ -44,8 +44,13 @@ source "${_LIB_PATH}/boolean.sh"
 
 # Get whether verbose logging is enabled.
 function lib::logging::is_verbose_enabled() {
-    # shellcheck disable=SC2046
-    return $(lib::boolean::is_truthy "${VERBOSE}")
+    if [[ -n "${VERBOSE}" ]]; then
+        # shellcheck disable=SC2086
+        return ${FALSE}
+    fi
+    # -- eval to ensure we actually pick up post-loaded functions
+    eval lib::boolean::is_truthy "${VERBOSE}"
+    return $?
 }
 
 # Log an error message to the standard error stream.

@@ -1,6 +1,25 @@
 #!/usr/bin/env bash
 set +x +e
 
+declare -A EXIT_CODES=(
+    [SUCCESS]=0
+    [RUNNING_IN_CI_ENVIRONMENT]=0
+    [HOOKS_ALREADY_INSTALLED]=0
+    [ENTER_PROJECT_ROOT_FAILED]=1
+    [UNSUPPORTED_SHELL]=2
+)
+
+declare -A EXIT_MESSAGES=(
+    [SUCCESS]="Successfully set up Git hooks!"
+    [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up Git hooks!"
+    [HOOKS_ALREADY_INSTALLED]="Git hooks already installed, skipping!"
+    [ENTER_PROJECT_ROOT_FAILED]="Failed to enter project root directory!"
+    [GIT_CONFIG_TMP_FAILED]="Failed to create working copy of Git config!"
+    [GIT_CONFIG_UPDATE_FAILED]="Failed to modify temporary Git configuration with new hook path!"
+    [GIT_CONFIG_OVERWRITE_FAILED]="Failed to overwrite Git configuration with modified version!"
+    [UNSUPPORTED_SHELL]="Unsupported shell! Please use bash, ksh93, or zsh."
+)
+
 SCRIPT_DIR="$( (
     # Get the directory the script is running from.
     # === Outputs ===
@@ -11,7 +30,26 @@ SCRIPT_DIR="$( (
     # `2` - a `popd` call failed.
     function get_script_dir() {
         pushd . 2>&1 > /dev/null || return 1
-        local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
+        local SCRIPT_PATH
+        if [[ -n "${BASH}" ]]; then
+            # shellcheck disable=SC2128
+            SCRIPT_PATH="${BASH_SOURCE}"
+        elif [[ -n "${ZSH_VERSION}" ]]; then
+            # shellcheck disable=SC2296
+            SCRIPT_PATH="${(%):-%x}"
+        elif [[ -n "${TMOUT}" ]]; then
+            # shellcheck disable=SC2296
+            SCRIPT_PATH="${.sh.file}"
+        elif [[ "${0##*/}" == "dash" ]]; then
+            local x
+            x="$(lsof -p $$ -Fn0 | tail -1)"
+            # shellcheck disable=SC2296
+            SCRIPT_PATH="${x#n}"
+        else
+            printf '\e[38;5;196m[ERROR]\e[0m %s' "${EXIT_MESSAGES[UNSUPPORTED_SHELL]}" 1>&2
+            # shellcheck disable=SC2086
+            return ${EXIT_CODES[UNSUPPORTED_SHELL]}
+        fi
         while [[ -L "${SCRIPT_PATH}" ]]; do
             cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
             SCRIPT_PATH="$(readlink -e -- "$SCRIPT_PATH")"
@@ -33,23 +71,6 @@ source "${_LIB_PATH}/logging.sh"
 source "${_LIB_PATH}/io.sh"
 # shellcheck source=./lib/os.sh
 source "${_LIB_PATH}/os.sh"
-
-declare -A EXIT_CODES=(
-    [SUCCESS]=0
-    [RUNNING_IN_CI_ENVIRONMENT]=0
-    [HOOKS_ALREADY_INSTALLED]=0
-    [ENTER_PROJECT_ROOT_FAILED]=1
-)
-
-declare -A EXIT_MESSAGES=(
-    [SUCCESS]="Successfully set up Git hooks!"
-    [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up Git hooks!"
-    [HOOKS_ALREADY_INSTALLED]="Git hooks already installed, skipping!"
-    [ENTER_PROJECT_ROOT_FAILED]="Failed to enter project root directory!"
-    [GIT_CONFIG_TMP_FAILED]="Failed to create working copy of Git config!"
-    [GIT_CONFIG_UPDATE_FAILED]="Failed to modify temporary Git configuration with new hook path!"
-    [GIT_CONFIG_OVERWRITE_FAILED]="Failed to overwrite Git configuration with modified version!"
-)
 
 # -- The path to the project root directory
 PROJECT_ROOT="$(readlink -e -- "${SCRIPT_DIR}/../")"
