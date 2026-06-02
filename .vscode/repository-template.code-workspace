@@ -6,6 +6,7 @@
         }
     ],
     "settings": {
-        "github.branchProtection": false
+        "prettier.configPath": ".prettierrc.mjs",
+        "prettier.ignorePath": ".prettierignore"
     }
 }
