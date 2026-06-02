@@ -4,6 +4,7 @@ generis
 glek
 glektarssza
 hookspath
+hotfixes
 iregex
 mapfile
 mpre
