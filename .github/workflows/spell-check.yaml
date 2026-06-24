@@ -58,7 +58,7 @@ jobs:
     steps:
       - id: checkout-repository
         name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{inputs.git-ref}}
           lfs: true
