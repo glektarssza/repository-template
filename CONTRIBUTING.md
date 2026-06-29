@@ -53,15 +53,24 @@ Valid prefixes are:
 
 * `bug`
 * `bugfix`
+* `bugfixes`
+* `bugs`
 * `chore`
+* `chores`
 * `dependabot`
-* `docs`
+* `dependencies`
+* `dependency`
 * `feature`
+* `features`
 * `hotfix`
+* `hotfixes`
 * `refactor`
+* `refactoring`
+* `refactors`
 * `release`
 * `security`
 * `task`
+* `tasks`
 
 Please note that the `release` prefix is reserved for contributors who have
 permissions to create releases and the `dependabot` prefix is reserved for the
