@@ -1,36 +1,22 @@
 version: 2
-multi-ecosystem-groups:
-  weekly-dependency-updates:
-    assignees:
-      - glektarssza
+updates:
+  - directory: ./.github/
+    package-ecosystem: github-actions
+    patterns:
+      - '*'
     labels:
       - Dependency
+    assignees:
+      - glektarssza
     commit-message:
+      include: scope
       prefix: '[Dependabot] '
     pull-request-branch-name:
       separator: /
+    rebase-strategy: auto
+    target-branch: main
     schedule:
       interval: weekly
       day: wednesday
       time: '12:00'
       timezone: Canada/Mountain
-updates:
-  - directory: .github/workflows
-    package-ecosystem: github-actions
-    rebase-strategy: auto
-    groups:
-      production-version-updates:
-        applies-to: version-updates
-        dependency-type: production
-      development-version-updates:
-        applies-to: version-updates
-        dependency-type: development
-      production-security-updates:
-        applies-to: security-updates
-        dependency-type: production
-      development-security-updates:
-        applies-to: security-updates
-        dependency-type: development
-    multi-ecosystem-group: weekly-dependency-updates
-    patterns:
-      - '*'
