@@ -1,6 +1,6 @@
 # Modified MIT License #
 
-Copyright (c) 2024 to present G'lek Tarssza
+Copyright (c) 2025 to present G'lek Tarssza
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
