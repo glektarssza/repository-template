@@ -4,10 +4,10 @@
 
 The table explains which versions are currently being supported versus not.
 
-| Version         | Supported          |
-| --------------- | ------------------ |
-| <VERSION_RANGE> | :white_check_mark: |
-| <VERSION_RANGE> | :x:                |
+| Version | Supported          |
+| ------- | ------------------ |
+| N/A     | :white_check_mark: |
+| N/A     | :x:                |
 
 ## Reporting a Vulnerability ##
 
