@@ -56,7 +56,19 @@ This template repository is set up to support the following:
 
 ## Setup ##
 
-1. Update the following files:
+1. Run `./scripts/setup-git-hooks.sh` to install Git hooks into your local Git
+   configuration (including `pre-commit`).
+* [ ] Done
+2. Set up GitHub labels from the `.github/labels.yaml` file (if applicable).
+* [ ] Done
+3. Set up GitHub rulesets from the files inside `.github/samples/rulesets`
+   (if applicable).
+* [ ] Done
+4. Update GitHub Dependabot setup (if applicable).
+* [ ] Done
+5. Enable VSCode integrations.
+* [ ] Done
+6. Update the following files:
     * `README.md`
         * Update the title.
         * Update the description.
@@ -76,24 +88,6 @@ This template repository is set up to support the following:
         * Add your funding information (if applicable).
     * `.github/CODEOWNERS`
         * Set your code owners (if applicable).
-1. Link `.gitconfig` into repository config by adding the following snippet into
-   your local `.git/config` at the top:
-```ini
-[include]
-    path="../.gitconfig"
-```
-* [ ] Done
-2. Run `./scripts/setup-pre-commit.sh` to install and configure `pre-commit`.
-* [ ] Done
-3. Set up GitHub labels from the `.github/labels.yaml` file (if applicable).
-* [ ] Done
-4. Set up GitHub rulesets from the files inside `.github/samples/rulesets`
-   (if applicable).
-* [ ] Done
-5. Update GitHub Dependabot setup (if applicable).
-* [ ] Done
-6. Enable VSCode integrations.
-* [ ] Done
 7. Good to go!
 * [ ] Yay!
 
