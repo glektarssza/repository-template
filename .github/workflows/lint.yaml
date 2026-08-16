@@ -41,7 +41,7 @@ jobs:
           token: ${{env.GITHUB_TOKEN}}
       - id: prepare-python
         name: Prepare Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '>=3'
       - id: install-pre-commit
