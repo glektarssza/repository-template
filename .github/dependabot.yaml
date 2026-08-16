@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - directory: ./.github/
+  - directory: /
     package-ecosystem: github-actions
     patterns:
       - '*'
