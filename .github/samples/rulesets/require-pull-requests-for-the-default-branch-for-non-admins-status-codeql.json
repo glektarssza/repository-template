@@ -30,6 +30,10 @@
                     {
                         "context": "Lint / Lint",
                         "integration_id": 15368
+                    },
+                    {
+                        "context": "Spell Check / Spell Check",
+                        "integration_id": 15368
                     }
                 ]
             }
