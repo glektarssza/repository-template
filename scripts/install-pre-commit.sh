@@ -1,18 +1,11 @@
 #!/usr/bin/env bash
 set +x +e
 
-SCRIPT_DIR="$( (
-    # Get the directory the script is running from.
-    # === Outputs ===
-    # The path to the directory the script is running from.
-    # === Returns ===
-    # `0` - the function succeeded.
-    # `1` - a `cd` call failed.
-    # `2` - a `popd` call failed.
+SCRIPT_DIR="$(
     function get_script_dir() {
         pushd . 2>&1 > /dev/null || return 1
         local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
-        while [[ -L "${SCRIPT_PATH}" ]]; do
+        while [[ -L ${SCRIPT_PATH} ]]; do
             cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
             SCRIPT_PATH="$(readlink -e -- "$SCRIPT_PATH")"
         done
@@ -23,7 +16,7 @@ SCRIPT_DIR="$( (
         return 0
     }
     get_script_dir
-))"
+)"
 
 _LIB_PATH="$(readlink -e -- "${SCRIPT_DIR}/lib/")"
 
@@ -40,14 +33,14 @@ declare -A EXIT_CODES=(
 )
 
 declare -A EXIT_MESSAGES=(
-    [SUCCESS]="Successfully installed \"pre-commit\"!"
+    [SUCCESS]='Successfully installed "pre-commit"!'
     [RUNNING_IN_CI_ENVIRONMENT]="Running in a CI environment, not setting up Git hooks!"
 )
 
 # -- Determine our distribution
 DISTRO="$(lib::os::get_distro)"
 
-if [[ -n "${CI}" ]]; then
+if [[ -n ${CI} ]]; then
     if [[ $* =~ .*--force.* ]]; then
         lib::logging::warn "Running in a CI environment but requested bypass of CI flag skip!"
         lib::logging::warn "Hope you know what you're doing!"
@@ -58,15 +51,15 @@ if [[ -n "${CI}" ]]; then
     fi
 fi
 
-lib::logging::info "Starting \"pre-commit\" installation..."
-lib::logging::verbose "Checking for \"pre-commit\"..."
+lib::logging::info 'Starting "pre-commit" installation...'
+lib::logging::verbose 'Checking for "pre-commit"...'
 
 # Locate pre-commit
 PRE_COMMIT="$(command -v pre-commit 2> /dev/null)"
-if [[ -z "${PRE_COMMIT}" ]]; then
-    lib::logging::warn "\"pre-commit\" is not installed, attempting to install via \"pipx\"!"
+if [[ -z ${PRE_COMMIT} ]]; then
+    lib::logging::warn '"pre-commit" is not installed, attempting to install via "pipx"!'
     if ! which pipx > /dev/null 2>&1; then
-        lib::logging::warn "\"pipx\" is not installed, attempting to install!"
+        lib::logging::warn '"pipx" is not installed, attempting to install!'
         case "${DISTRO}" in
             arch)
                 PIPX_PACKAGE_NAME="python-pipx"
@@ -80,14 +73,14 @@ if [[ -z "${PRE_COMMIT}" ]]; then
                 ;;
         esac
         lib::logging::info "We're going to attempt to install \"pipx\", this will require admin permissions!"
-        if [[ ! -x "${PACMAN}" ]]; then
+        if [[ ! -x ${PACMAN} ]]; then
             lib::logging::warn "Unable to execute \"${PACMAN}\" as we are, trying to elevate..."
             if command -v sudo >&/dev/null; then
                 if ! lib::io::prompt_to_continue "We're about to run 'sudo \"${SHELL}\" -i -c \"${PACMAN} ${PACMAN_FLAGS[*]} ${PACKAGE_NAME}\"'." "n"; then
                     lib::logging::error "Aborting!"
                     exit 1
                 fi
-                lib::logging::verbose "Trying to elevate via \"sudo\"..."
+                lib::logging::verbose 'Trying to elevate via "sudo"...'
                 sudo --login eval "${PACMAN} ${PACMAN_FLAGS[*]} ${PIPX_PACKAGE_NAME}"
                 STATUS_CODE=$?
             elif command -v su >&/dev/null; then
@@ -95,7 +88,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
                     lib::logging::error "Aborting!"
                     exit 1
                 fi
-                lib::logging::verbose "Trying to elevate via \"su\"..."
+                lib::logging::verbose 'Trying to elevate via "su"...'
                 su --login --command="${PACMAN} ${PACMAN_FLAGS[*]} ${PIPX_PACKAGE_NAME}"
                 STATUS_CODE=$?
             else
@@ -109,34 +102,34 @@ if [[ -z "${PRE_COMMIT}" ]]; then
         else
             lib::log::info "\"${PIPX_PACKAGE_NAME}\" is already installed!"
         fi
-        if [[ "${STATUS_CODE}" != "0" ]]; then
+        if [[ ${STATUS_CODE} != "0" ]]; then
             lib::logging::verbose "\"${PACMAN}\" exited with code \"${STATUS_CODE}\"!"
-            lib::logging::error "Failed to install \"pipx\"!"
+            lib::logging::error 'Failed to install "pipx"!'
             # shellcheck disable=SC2086
             exit ${STATUS_CODE}
         fi
-        lib::logging::info "\"pipx\" was installed successfully!"
+        lib::logging::info '"pipx" was installed successfully!'
     fi
     pipx install pre-commit
     STATUS_CODE=$?
-    if [[ "${STATUS_CODE}" != "0" ]]; then
+    if [[ ${STATUS_CODE} != "0" ]]; then
         lib::logging::verbose "\"pipx\" exited with code \"${STATUS_CODE}\"!"
-        lib::logging::error "Failed to install \"pre-commit\"!"
+        lib::logging::error 'Failed to install "pre-commit"!'
         exit $STATUS_CODE
     fi
-    lib::logging::info "\"pre-commit\" was installed successfully!"
+    lib::logging::info '"pre-commit" was installed successfully!'
     PRE_COMMIT="$(which pre-commit 2> /dev/null)"
-    if [[ -z "${PRE_COMMIT}" ]]; then
-        lib::logging::warn "Still cannot find \"pre-commit\", trying some well-known locations..."
+    if [[ -z ${PRE_COMMIT} ]]; then
+        lib::logging::warn 'Still cannot find "pre-commit", trying some well-known locations...'
         mapfile -t PRE_COMMIT_PATHS < <(find ~ -maxdepth 4 \( -type f -or -type l \) -name pre-commit -printf '%p\n')
-        if [[ "${#PRE_COMMIT_PATHS[@]}" -le 0 ]]; then
-            lib::logging::error "Failed to locate \"pre-commit\"!"
+        if [[ ${#PRE_COMMIT_PATHS[@]} -le 0 ]]; then
+            lib::logging::error 'Failed to locate "pre-commit"!'
             exit 1
         fi
         echo -e "Found the following \"pre-commit\" executables:\n$(echo "${PRE_COMMIT_PATHS[*]}" | awk -F' ' '{for(i=1;i<=NF;i+=1){print i": "$i;}}')"
         read -rep "Which one do you want to use? [index] " PRE_COMMIT_INDEX
-        while [[ ! "${PRE_COMMIT_INDEX}" =~ [[:digit:]]+ || "${PRE_COMMIT_INDEX}" -lt 0 || "${PRE_COMMIT_INDEX}" -gt "${#PRE_COMMIT_PATHS[@]}" ]]; do
-            if [[ -z "${PRE_COMMIT_INDEX}" ]]; then
+        while [[ ! ${PRE_COMMIT_INDEX} =~ [[:digit:]]+ || ${PRE_COMMIT_INDEX} -lt 0 || ${PRE_COMMIT_INDEX} -gt ${#PRE_COMMIT_PATHS[@]} ]]; do
+            if [[ -z ${PRE_COMMIT_INDEX} ]]; then
                 PRE_COMMIT_INDEX="1"
                 break
             fi
@@ -145,7 +138,7 @@ if [[ -z "${PRE_COMMIT}" ]]; then
             read -rep "Which one do you want to use? [index (default 1)] " PRE_COMMIT_INDEX
         done
         lib::logging::verbose "\"pre-commit\" option index \"${PRE_COMMIT_INDEX}\" picked"
-        PRE_COMMIT="${PRE_COMMIT_PATHS[(${PRE_COMMIT_INDEX} - 1)]}"
+        PRE_COMMIT="${PRE_COMMIT_PATHS[${PRE_COMMIT_INDEX} - 1]}"
         lib::logging::verbose "Selected \"pre-commit\" executable \"${PRE_COMMIT}\""
     fi
 else

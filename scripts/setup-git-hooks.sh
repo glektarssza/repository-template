@@ -21,13 +21,6 @@ declare -A EXIT_MESSAGES=(
 )
 
 SCRIPT_DIR="$( (
-    # Get the directory the script is running from.
-    # === Outputs ===
-    # The path to the directory the script is running from.
-    # === Returns ===
-    # `0` - the function succeeded.
-    # `1` - a `cd` call failed.
-    # `2` - a `popd` call failed.
     function get_script_dir() {
         pushd . 2>&1 > /dev/null || return 1
         local SCRIPT_PATH
