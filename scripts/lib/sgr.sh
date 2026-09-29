@@ -1,16 +1,9 @@
-if [[ -z "${_LIB_PATH}" ]]; then
-    if ! SCRIPT_DIR="$( (
-        # Get the directory the script is running from.
-        # === Outputs ===
-        # The path to the directory the script is running from.
-        # === Returns ===
-        # `0` - the function succeeded.
-        # `1` - a `cd` call failed.
-        # `2` - a `popd` call failed.
+if [[ -z ${_LIB_PATH} ]]; then
+    if ! SCRIPT_DIR="$(
         function get_script_dir() {
             pushd . 2>&1 > /dev/null || return 1
             local SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
-            while [[ -L "${SCRIPT_PATH}" ]]; do
+            while [[ -L ${SCRIPT_PATH} ]]; do
                 cd "$(dirname -- "${SCRIPT_PATH}")" || return 2
                 SCRIPT_PATH="$(readlink -e -- "$SCRIPT_PATH")"
             done
@@ -21,16 +14,16 @@ if [[ -z "${_LIB_PATH}" ]]; then
             return 0
         }
         get_script_dir
-    ))"; then
+    )"; then
         return 1
     fi
 
-    if [[ -z "${_LIB_PATH}" ]]; then
+    if [[ -z ${_LIB_PATH} ]]; then
         _LIB_PATH="$(readlink -e -- "${SCRIPT_DIR}")"
     fi
 fi
 
-if [[ -n "${_LIB_SGR_GUARD+x}" ]]; then
+if [[ -n ${_LIB_SGR_GUARD+x} ]]; then
     return 0
 fi
 declare _LIB_SGR_GUARD
@@ -55,10 +48,10 @@ function lib::sgr::reset() {
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
 function lib::sgr::4bit_fg() {
-    if [[ -z "$1" ]]; then
+    if [[ -z $1 ]]; then
         return 1
     fi
-    if [[ ("$1" -ge 30 && "$1" -le 37) || ("$1" -ge 90 || "$1" -le 97) ]]; then
+    if [[ ($1 -ge 30 && $1 -le 37) || ($1 -ge 90 || $1 -le 97) ]]; then
         printf "\e[%dm" "$1"
         return $?
     fi
@@ -75,10 +68,10 @@ function lib::sgr::4bit_fg() {
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
 function lib::sgr::4bit_bg() {
-    if [[ -z "$1" ]]; then
+    if [[ -z $1 ]]; then
         return 1
     fi
-    if [[ ("$1" -ge 40 && "$1" -le 47) || ("$1" -ge 100 || "$1" -le 107) ]]; then
+    if [[ ($1 -ge 40 && $1 -le 47) || ($1 -ge 100 || $1 -le 107) ]]; then
         printf "\e[%dm" "$1"
         return $?
     fi
@@ -95,10 +88,10 @@ function lib::sgr::4bit_bg() {
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
 function lib::sgr::8bit_fg() {
-    if [[ -z "$1" ]]; then
+    if [[ -z $1 ]]; then
         return 1
     fi
-    if [[ "$1" -ge 0 && "$1" -le 255 ]]; then
+    if [[ $1 -ge 0 && $1 -le 255 ]]; then
         printf "\e[38;5;%dm" "$1"
         return $?
     fi
@@ -115,10 +108,10 @@ function lib::sgr::8bit_fg() {
 # `2` - If the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
 function lib::sgr::8bit_bg() {
-    if [[ -z "$1" ]]; then
+    if [[ -z $1 ]]; then
         return 1
     fi
-    if [[ "$1" -ge 0 && "$1" -le 255 ]]; then
+    if [[ $1 -ge 0 && $1 -le 255 ]]; then
         printf "\e[48;5;%dm" "$1"
         return $?
     fi
@@ -137,10 +130,10 @@ function lib::sgr::8bit_bg() {
 # `2` - If one of the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
 function lib::sgr::24bit_fg() {
-    if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+    if [[ -z $1 || -z $2 || -z $3 ]]; then
         return 1
     fi
-    if [[ "$1" -ge 0 && "$1" -le 255 && "$2" -ge 0 && "$2" -le 255 && "$3" -ge 0 && "$3" -le 255 ]]; then
+    if [[ $1 -ge 0 && $1 -le 255 && $2 -ge 0 && $2 -le 255 && $3 -ge 0 && $3 -le 255 ]]; then
         printf "\e[38;2;%d;%d;%dm" "$1" "$2" "$3"
         return $?
     fi
@@ -159,10 +152,10 @@ function lib::sgr::24bit_fg() {
 # `2` - If one of the color code was outside the allowed range.
 # Otherwise the result of calling `printf`.
 function lib::sgr::24bit_bg() {
-    if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+    if [[ -z $1 || -z $2 || -z $3 ]]; then
         return 1
     fi
-    if [[ "$1" -ge 0 && "$1" -le 255 && "$2" -ge 0 && "$2" -le 255 && "$3" -ge 0 && "$3" -le 255 ]]; then
+    if [[ $1 -ge 0 && $1 -le 255 && $2 -ge 0 && $2 -le 255 && $3 -ge 0 && $3 -le 255 ]]; then
         printf "\e[48;2;%d;%d;%dm" "$1" "$2" "$3"
         return $?
     fi
