@@ -37,13 +37,19 @@ source "${_LIB_PATH}/logging.sh"
 # === Outputs ===
 # The distribution the script is running on as per `/etc/os-release`.
 # === Returns ===
-# `0` - If the command completed.
+# `0` - If the command completed successfully.
 # `...` - The error code that occurred.
 function lib::os::get_distro() {
     cat /etc/os-release | grep '^ID' | awk -F'=' '{print $2;}' 2> /dev/null
     return $?
 }
 
+# Install a system package.
+# === Inputs ===
+# `$1` - The package to install.
+# === Returns ===
+# `0` - If the command completed successfully.
+# `...` - The error code that occurred.
 function lib::os::install_system_package() {
     local -a PACMAN_FLAGS
     local PACMAN PACKAGE_NAME DISTRO STATUS_CODE
