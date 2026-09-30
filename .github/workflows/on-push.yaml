@@ -2,6 +2,9 @@
 name: On Push
 on:
   push:
+concurrency:
+  group: on-push-${{github.ref_name}}
+  cancel-in-progress: true
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:

@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+concurrency:
+  group: on-pull-request-${{github.ref_name}}
+  cancel-in-progress: true
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
