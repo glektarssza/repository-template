@@ -36,61 +36,120 @@ source "${_LIB_PATH}/strings.sh"
 source "${_LIB_PATH}/boolean.sh"
 
 # Format the input.
+# === Inputs ===
+# `$1` - The message to format.
+# `...` - The parameters to inject into the message.
+# === Outputs ===
+# The formatted message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::format() {
+    local -a ARGS
+    local MSG
+    MSG="${1}"
+    shift
+    while [[ -n "${1}" ]]; do
+        if [[ "${1}" =~ (<eval .*/>) ]]; then
+            local EVAL
+            EVAL="$(sed -E 's/<eval[[:space:]]+(.*)[[:space:]]*\/>$/\1/' <<< "${1}")"
+            ARGS+=("$(eval "${EVAL}")")
+        else
+            ARGS+=("${1}")
+        fi
+        shift
+    done
     # shellcheck disable=SC2059
-    printf "${1}\n" "${*:2}"
+    printf "${MSG}" "${ARGS[@]}"
     return $?
 }
 
 # Get whether verbose logging is enabled.
+# === Returns ===
+# `0` - If verbose logging is enabled.
+# `1` - If verbose logging is not enabled.
 function lib::logging::is_verbose_enabled() {
     lib::boolean::is_truthy "${VERBOSE}"
     return $?
 }
 
 # Log an error message to the standard error stream.
+# === Inputs ===
+# `$1` - The message to log.
+# `...` - The parameters to inject into the message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::error() {
     # shellcheck disable=SC2048,2086
-    lib::sgr::8bit_fg "196" >&2 && printf "[ERROR] " >&2 && lib::sgr::reset >&2 && lib::logging::format "$*" >&2
+    lib::sgr::8bit_fg "196" >&2 && printf "[ERROR] " >&2 && lib::sgr::reset >&2 && printf "%b\n" "$(lib::logging::format "${@}")" >&2
     return $?
 }
 
 # Log a warning message to the standard output stream.
+# === Inputs ===
+# `$1` - The message to log.
+# `...` - The parameters to inject into the message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::warn() {
     # shellcheck disable=SC2048,2086
-    lib::sgr::8bit_fg "214" && printf "[WARN] " && lib::sgr::reset && lib::logging::format "$*"
+    lib::sgr::8bit_fg "214" && printf "[WARN] " && lib::sgr::reset && printf "%b\n" "$(lib::logging::format "${@}")"
     return $?
 }
 
 # Log an information message to the standard output stream.
+# === Inputs ===
+# `$1` - The message to log.
+# `...` - The parameters to inject into the message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::info() {
     # shellcheck disable=SC2048,2086
-    lib::sgr::8bit_fg "111" && printf "[INFO] " && lib::sgr::reset && lib::logging::format "$*"
+    lib::sgr::8bit_fg "111" && printf "[INFO] " && lib::sgr::reset && printf "%b\n" "$(lib::logging::format "${@}")"
     return $?
 }
 
 # Log a verbose message to the standard output stream.
+# === Inputs ===
+# `$1` - The message to log.
+# `...` - The parameters to inject into the message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::verbose() {
-    local MESSAGE
     if ! lib::logging::is_verbose_enabled; then
         return 0
     fi
-    MESSAGE="$(lib::logging::format "${1}" "${*:2}")"
     # shellcheck disable=SC2048,2086
-    lib::sgr::8bit_fg "171" && printf "[VERBOSE] " && lib::sgr::reset && printf "%b\n" "${MESSAGE}"
+    lib::sgr::8bit_fg "171" && printf "[VERBOSE] " && lib::sgr::reset && printf "%b\n" "$(lib::logging::format "${@}")"
     return $?
 }
 
 # Log a success message to the standard output stream.
+# === Inputs ===
+# `$1` - The message to log.
+# `...` - The parameters to inject into the message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::success() {
     # shellcheck disable=SC2048,2086
-    lib::sgr::8bit_fg "118" && lib::logging::format "$*" && lib::sgr::reset
+    lib::sgr::8bit_fg "118" && printf "%b\n" "$(lib::logging::format "${@}")" && lib::sgr::reset
     return $?
 }
 
 # Log a failure message to the standard output stream.
+# === Inputs ===
+# `$1` - The message to log.
+# `...` - The parameters to inject into the message.
+# === Returns ===
+# `0` - Success
+# `1` - Failure
 function lib::logging::failure() {
     # shellcheck disable=SC2048,2086
-    lib::sgr::8bit_fg "196" && lib::logging::format "$*" && lib::sgr::reset
+    lib::sgr::8bit_fg "196" && printf "%b\n" "$(lib::logging::format "${@}")" && lib::sgr::reset
     return $?
 }

@@ -28,6 +28,8 @@ if [[ -n ${_LIB_IO_GUARD+x} ]]; then
 fi
 declare _LIB_IO_GUARD
 
+# shellcheck source=./sgr.sh
+source "${_LIB_PATH}/sgr.sh"
 # shellcheck source=./logging.sh
 source "${_LIB_PATH}/logging.sh"
 # shellcheck source=./strings.sh
@@ -50,9 +52,9 @@ function lib::io::prompt_to_continue() {
         return 2
     fi
     if [[ "$(lib::strings::to_lower_case "${DEFAULT_RESP}")" == "y" ]]; then
-        PROMPT="${PROMPT}\nIs this okay? [Y/n] "
+        PROMPT="$(lib::sgr::8bit_fg 220)[PROMPT]$(lib::sgr::reset) ${PROMPT}\nIs this okay? [Y/n] "
     else
-        PROMPT="${PROMPT}\nIs this okay? [y/N] "
+        PROMPT="$(lib::sgr::8bit_fg 220)[PROMPT]$(lib::sgr::reset) ${PROMPT}\nIs this okay? [y/N] "
     fi
     while true; do
         printf "%b" "${PROMPT}"

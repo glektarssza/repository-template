@@ -46,7 +46,7 @@ function lib::sgr::reset() {
 # === Returns ===
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
-# Otherwise the result of calling `printf`.
+# `...` - The result of calling `printf`.
 function lib::sgr::4bit_fg() {
     if [[ -z $1 ]]; then
         return 1
@@ -66,7 +66,7 @@ function lib::sgr::4bit_fg() {
 # === Returns ===
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
-# Otherwise the result of calling `printf`.
+# `...` - The result of calling `printf`.
 function lib::sgr::4bit_bg() {
     if [[ -z $1 ]]; then
         return 1
@@ -86,7 +86,7 @@ function lib::sgr::4bit_bg() {
 # === Returns ===
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
-# Otherwise the result of calling `printf`.
+# `...` - The result of calling `printf`.
 function lib::sgr::8bit_fg() {
     if [[ -z $1 ]]; then
         return 1
@@ -106,7 +106,7 @@ function lib::sgr::8bit_fg() {
 # === Returns ===
 # `1` - If no color code was provided.
 # `2` - If the color code was outside the allowed range.
-# Otherwise the result of calling `printf`.
+# `...` - The result of calling `printf`.
 function lib::sgr::8bit_bg() {
     if [[ -z $1 ]]; then
         return 1
@@ -128,7 +128,7 @@ function lib::sgr::8bit_bg() {
 # === Returns ===
 # `1` - If one of the color code was not provided.
 # `2` - If one of the color code was outside the allowed range.
-# Otherwise the result of calling `printf`.
+# `...` - The result of calling `printf`.
 function lib::sgr::24bit_fg() {
     if [[ -z $1 || -z $2 || -z $3 ]]; then
         return 1
@@ -150,7 +150,9 @@ function lib::sgr::24bit_fg() {
 # === Returns ===
 # `1` - If one of the color code was not provided.
 # `2` - If one of the color code was outside the allowed range.
-# Otherwise the result of calling `printf`.
+# `...` - The result of calling `printf`.
+# === Notes ===
+# Sourced from https://unix.stackexchange.com/a/655825
 function lib::sgr::24bit_bg() {
     if [[ -z $1 || -z $2 || -z $3 ]]; then
         return 1
