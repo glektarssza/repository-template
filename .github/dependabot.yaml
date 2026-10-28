@@ -4,17 +4,17 @@ updates:
     package-ecosystem: github-actions
     patterns:
       - '*'
-    labels:
-      - Dependency
-    assignees:
-      - glektarssza
+    target-branch: main
+    rebase-strategy: auto
     commit-message:
       include: scope
       prefix: '[Dependabot] '
     pull-request-branch-name:
       separator: /
-    rebase-strategy: auto
-    target-branch: main
+    labels:
+      - Dependency
+    assignees:
+      - glektarssza
     schedule:
       interval: weekly
       day: wednesday
