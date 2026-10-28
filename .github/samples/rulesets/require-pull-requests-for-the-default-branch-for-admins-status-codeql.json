@@ -1,5 +1,5 @@
 {
-    "name": "Require pull requests for the default branch for non-admins",
+    "name": "Require pull requests for the default branch for admins",
     "target": "branch",
     "enforcement": "active",
     "conditions": {
