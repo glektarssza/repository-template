@@ -21,6 +21,9 @@ on:
         description: |
           The NodeJS version to use.
 
+          Use the keyword "latest" to default to the latest supported version of
+          NodeJS.
+
           Defaults to "latest".
         type: string
         required: false
@@ -72,8 +75,16 @@ jobs:
           version: ${{inputs.package-manager-version}}
           run_install: false
           standalone: false
-      - id: setup-nodejs
-        name: Setup NodeJS
+      - id: setup-latest-nodejs
+        if: inputs.node-version == 'latest'
+        name: Setup Latest NodeJS
+        uses: actions/setup-node@v7
+        with:
+          token: ${{env.GITHUB_TOKEN}}
+          node-version: 26.x
+      - id: setup-user-specified-nodejs
+        if: inputs.node-version != 'latest'
+        name: Setup User-Specified NodeJS
         uses: actions/setup-node@v7
         with:
           token: ${{env.GITHUB_TOKEN}}
